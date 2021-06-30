@@ -31,6 +31,7 @@ RUN mkdir /root/.ssh/
 COPY ./id_ecdsa /root/.ssh/id_ecdsa
 RUN touch /root/.ssh/known_hosts
 RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
+RUN chmod 600 /root/.ssh/id_ecdsa
 
 # Install dogeparty-cli
 # NOTE: By default, check out the dogeparty-cli master branch. You can override the BRANCH build arg for a different

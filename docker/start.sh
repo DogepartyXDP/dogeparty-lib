@@ -10,14 +10,14 @@ fi
 
 # Bootstrap if the database does not exist (do this here to handle cases
 # where a volume is mounted over the share dir, like the fednode docker compose config does...)
-#if [ ! -f /root/.local/share/dogeparty/dogeparty.db ]; then
-#    echo "Downloading mainnet bootstrap DB..."
-#    dogeparty-server bootstrap --quiet
-#fi
-#if [ ! -f /root/.local/share/dogeparty/dogeparty.testnet.db ]; then
-#    echo "Downloading testnet bootstrap DB..."
-#    dogeparty-server --testnet bootstrap --quiet
-#fi
+if [ ! -f /root/.local/share/dogeparty/dogeparty.db ]; then
+    echo "Downloading mainnet bootstrap DB..."
+    dogeparty-server bootstrap --quiet
+fi
+if [ ! -f /root/.local/share/dogeparty/dogeparty.testnet.db ]; then
+    echo "Downloading testnet bootstrap DB..."
+    dogeparty-server --testnet bootstrap --quiet
+fi
 
 # Kick off the server, defaulting to the "start" subcommand
 # Launch utilizing the SIGTERM/SIGINT propagation pattern from

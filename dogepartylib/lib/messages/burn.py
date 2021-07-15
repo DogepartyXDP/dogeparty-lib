@@ -99,7 +99,8 @@ def parse (db, tx, MAINNET_BURNS, message=None):
 
             total_time = config.BURN_END - config.BURN_START
             partial_time = config.BURN_END - tx['block_index']
-            multiplier = (1000 + (500 * Fraction(partial_time, total_time)))
+            #multiplier = (1000 + (500 * Fraction(partial_time, total_time)))
+            multiplier = (10 + (5 * Fraction(partial_time, total_time)))
             earned = round(burned * multiplier)
 
             # Credit source address with earned XDP.

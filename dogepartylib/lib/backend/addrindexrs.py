@@ -287,9 +287,9 @@ class AddrIndexRsThread (threading.Thread):
         logging.debug('AddrIndexRs connecting')
         self.lastId = 0
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.connect((self.host, self.port))
         self.sock.settimeout(SOCKET_TIMEOUT)
-
+		self.sock.connect((self.host, self.port))
+        
     def run(self):
         self.locker = threading.Condition()
         self.locker.acquire()

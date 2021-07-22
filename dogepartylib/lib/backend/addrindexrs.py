@@ -288,7 +288,7 @@ class AddrIndexRsThread (threading.Thread):
         self.lastId = 0
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.settimeout(SOCKET_TIMEOUT)
-		self.sock.connect((self.host, self.port))
+        self.sock.connect((self.host, self.port))
         
     def run(self):
         self.locker = threading.Condition()

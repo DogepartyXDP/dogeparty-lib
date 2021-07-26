@@ -131,6 +131,10 @@ def get_dust_return_pubkey(source, provided_pubkeys, encoding):
     return dust_return_pubkey
 
 
+def fee_round_up(fee, decimals=0):
+    mult = 10 ** decimals
+    return int(math.ceil(fee * mult) / mult)
+
 def construct_coin_selection(encoding, data_array, source, allow_unconfirmed_inputs, unspent_tx_hash, custom_inputs,
                              fee_per_kb, estimate_fee_per_kb, estimate_fee_per_kb_nblocks, exact_fee, size_for_fee, fee_provided, destination_doge_out, data_doge_out,
                              regular_dust_size, disable_utxo_locks):
@@ -194,7 +198,8 @@ def construct_coin_selection(encoding, data_array, source, allow_unconfirmed_inp
             final_fee = exact_fee
         else:
             necessary_fee = int(size / 1000 * fee_per_kb)
-            final_fee = max(fee_provided, necessary_fee)
+            #final_fee = max(fee_provided, necessary_fee)
+            final_fee = fee_round_up(necessary_fee,-8)
             logger.getChild('p2shdebug').debug('final_fee inputs: %d size: %d final_fee %s' % (len(inputs), size, final_fee))
 
         # Check if good.

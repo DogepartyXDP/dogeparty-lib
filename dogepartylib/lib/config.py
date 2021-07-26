@@ -104,12 +104,12 @@ BURN_END_REGTEST_TESTCOIN = 150
 # NOTE: If the DUST_SIZE constants are changed, they MUST also be changed in dogeblockd/lib/config.py as well
     # TODO: This should be updated, given their new configurability.
 # TODO: The dust values should be lowered by 90%, once transactions with smaller outputs start confirming faster: <https://github.com/mastercoin-MSC/spec/issues/192>
-DEFAULT_REGULAR_DUST_SIZE = 5430         # TODO: This is just a guess. I got it down to 5530 satoshis.
-DEFAULT_MULTISIG_DUST_SIZE = 7800        # 
+DEFAULT_REGULAR_DUST_SIZE = 100000000         # TODO: This is just a guess. I got it down to 5530 satoshis.
+DEFAULT_MULTISIG_DUST_SIZE = 100000000        # 
 DEFAULT_OP_RETURN_VALUE = 0
-DEFAULT_FEE_PER_KB_ESTIMATE_SMART = 1024
-DEFAULT_FEE_PER_KB = 25000               # sane/low default, also used as minimum when estimated fee is used
-ESTIMATE_FEE_PER_KB = True               # when True will use `estimatesmartfee` from dogecoind instead of DEFAULT_FEE_PER_KB
+DEFAULT_FEE_PER_KB_ESTIMATE_SMART = 100000000
+DEFAULT_FEE_PER_KB = 100000000           # sane/low default, also used as minimum when estimated fee is used
+ESTIMATE_FEE_PER_KB = False               # when True will use `estimatesmartfee` from dogecoind instead of DEFAULT_FEE_PER_KB
 ESTIMATE_FEE_CONF_TARGET = 3
 ESTIMATE_FEE_MODE = 'CONSERVATIVE'
 

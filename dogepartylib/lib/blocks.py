@@ -594,7 +594,7 @@ def get_tx_info1(tx_hex, block_index, block_parser=None):
     """
     ctx = backend.deserialize(tx_hex)
 
-    magic_word_prefix = get_value_by_block_index('magic_word_prefix', block_index)
+    magic_word_prefix = util.get_value_by_block_index("magic_word_prefix", block_index)
 
     def get_pubkeyhash(scriptpubkey):
         asm = script.get_asm(scriptpubkey) 
@@ -725,7 +725,7 @@ def get_opreturn(asm):
 def decode_opreturn(asm, ctx):
     chunk = get_opreturn(asm)
     chunk = arc4_decrypt(chunk, ctx)
-    magic_word_prefix = get_value_by_block_index("magic_word_prefix").encode()
+    magic_word_prefix = util.get_value_by_block_index("magic_word_prefix").encode()
     if chunk[:len(magic_word_prefix)] == magic_word_prefix: # Data
         destination, data = None, chunk[len(magic_word_prefix):]
     else:
@@ -736,7 +736,7 @@ def decode_opreturn(asm, ctx):
 def decode_checksig(asm, ctx):
     pubkeyhash = script.get_checksig(asm)
     chunk = arc4_decrypt(pubkeyhash, ctx)
-    magic_word_prefix = get_value_by_block_index("magic_word_prefix").encode()
+    magic_word_prefix = util.get_value_by_block_index("magic_word_prefix").encode()
     if chunk[1:len(magic_word_prefix) + 1] == magic_word_prefix:        # Data
         # Padding byte in each output (instead of just in the last one) so that encoding methods may be mixed. Also, it’s just not very much data.
         chunk_length = chunk[0]
@@ -756,7 +756,7 @@ def decode_scripthash(asm):
 def decode_checkmultisig(asm, ctx):
     pubkeys, signatures_required = script.get_checkmultisig(asm)
     chunk = b''
-    magic_word_prefix = get_value_by_block_index("magic_word_prefix").encode()
+    magic_word_prefix = util.get_value_by_block_index("magic_word_prefix").encode()
     for pubkey in pubkeys[:-1]:     # (No data in last pubkey.)
         chunk += pubkey[1:-1]       # Skip sign byte and nonce byte.
     chunk = arc4_decrypt(chunk, ctx)

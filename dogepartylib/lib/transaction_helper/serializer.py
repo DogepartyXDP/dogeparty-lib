@@ -266,7 +266,7 @@ def serialise(encoding, inputs, destination_outputs, data_output=None, change_ou
         data_array, value = data_output
         s += value.to_bytes(8, byteorder='little')        # Value
 
-        data_chunk = get_value_by_block_index("magic_word_prefix").encode() + data_chunk
+        data_chunk = util.get_value_by_block_index("magic_word_prefix").encode() + data_chunk
 
         # Initialise encryption key (once per output).
         assert isinstance(inputs[0]['txid'], str)
@@ -377,7 +377,7 @@ def serialise_p2sh_pretx(inputs, source, source_value, data_output, change_outpu
 
     # P2SH for data encodeded inputs
     for n, data_chunk in enumerate(data_array):
-        data_chunk = get_value_by_block_index("magic_word_prefix").encode() + data_chunk  # prefix the data_chunk
+        data_chunk = util.get_value_by_block_index("magic_word_prefix").encode() + data_chunk  # prefix the data_chunk
 
         # get the scripts
         scriptSig, redeemScript, outputScript = p2sh_encoding.make_p2sh_encoding_redeemscript(data_chunk, n, pubkey, multisig_pubkeys, multisig_pubkeys_required)
@@ -430,7 +430,7 @@ def serialise_p2sh_datatx(txid, source, source_input, destination_outputs, data_
 
     # list of inputs
     for n, data_chunk in enumerate(data_array):
-        data_chunk = get_value_by_block_index("magic_word_prefix").encode() + data_chunk  # prefix the data_chunk
+        data_chunk = util.get_value_by_block_index("magic_word_prefix").encode() + data_chunk  # prefix the data_chunk
 
         # get the scripts
         scriptSig, redeemScript, outputScript = p2sh_encoding.make_p2sh_encoding_redeemscript(data_chunk, n, pubkey, multisig_pubkeys, multisig_pubkeys_required)
@@ -465,7 +465,7 @@ def serialise_p2sh_datatx(txid, source, source_input, destination_outputs, data_
 
     # opreturn to signal P2SH encoding
     key = arc4.init_arc4(txid)
-    data_chunk = get_value_by_block_index("magic_word_prefix").encode() + b'P2SH'
+    data_chunk = util.get_value_by_block_index("magic_word_prefix").encode() + b'P2SH'
     data_chunk = key.encrypt(data_chunk)
     tx_script = OP_RETURN                  # OP_RETURN
     tx_script += op_push(len(data_chunk))  # Push bytes of data chunk

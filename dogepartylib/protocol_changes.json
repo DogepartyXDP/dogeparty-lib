@@ -273,13 +273,13 @@
     "testnet_block_index": 1666625
   },
   "magic_word_prefix": {
-    "value_before": 'CNTRPRTY',
-    "value_after": 'DOGEPRTY',
-    "testnet_value_before": 'XX',
-    "testnet_value_after": 'XX',
+    "value_before": "CNTRPRTY",
+    "value_after": "DOGEPRTY",
+    "testnet_value_before": "XX",
+    "testnet_value_after": "XX",
     "block_index": 3829071,
     "testnet_block_index": 3256486
-  }
+  },
   "burn_address": {
     "value_before": "DDogepartyxxxxxxxxxxxxxxxxxxw1dfzr",
     "value_after": "DParty4kWgih7MpTUivMn1icgC5x7fxALP",

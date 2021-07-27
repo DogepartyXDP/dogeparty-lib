@@ -299,7 +299,7 @@ def construct (db, tx_info, encoding='auto',
                old_style_api=None, segwit=False,
                p2sh_source_multisig_pubkeys=None, p2sh_source_multisig_pubkeys_required=None, p2sh_pretx_txid=None,):
 
-    magic_word_prefix = get_value_by_block_index("magic_word_prefix").encode()
+    magic_word_prefix = util.get_value_by_block_index("magic_word_prefix").encode()
 
     if estimate_fee_per_kb is None:
         estimate_fee_per_kb = config.ESTIMATE_FEE_PER_KB

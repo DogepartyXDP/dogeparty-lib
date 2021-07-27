@@ -725,8 +725,9 @@ def get_opreturn(asm):
 def decode_opreturn(asm, ctx):
     chunk = get_opreturn(asm)
     chunk = arc4_decrypt(chunk, ctx)
-    if chunk[:len(get_value_by_block_index("magic_word_prefix"))] == get_value_by_block_index("magic_word_prefix"): # Data
-        destination, data = None, chunk[len(get_value_by_block_index("magic_word_prefix")):]
+    magic_word_prefix = get_value_by_block_index("magic_word_prefix").encode()
+    if chunk[:len(magic_word_prefix)] == magic_word_prefix: # Data
+        destination, data = None, chunk[len(magic_word_prefix):]
     else:
         raise DecodeError('unrecognised OP_RETURN output')
 
@@ -735,11 +736,12 @@ def decode_opreturn(asm, ctx):
 def decode_checksig(asm, ctx):
     pubkeyhash = script.get_checksig(asm)
     chunk = arc4_decrypt(pubkeyhash, ctx)
-    if chunk[1:len(get_value_by_block_index("magic_word_prefix")) + 1] == get_value_by_block_index("magic_word_prefix"):        # Data
+    magic_word_prefix = get_value_by_block_index("magic_word_prefix").encode()
+    if chunk[1:len(magic_word_prefix) + 1] == magic_word_prefix:        # Data
         # Padding byte in each output (instead of just in the last one) so that encoding methods may be mixed. Also, it’s just not very much data.
         chunk_length = chunk[0]
         chunk = chunk[1:chunk_length + 1]
-        destination, data = None, chunk[len(get_value_by_block_index("magic_word_prefix")):]
+        destination, data = None, chunk[len(magic_word_prefix):]
     else:                                                       # Destination
         pubkeyhash = binascii.hexlify(pubkeyhash).decode('utf-8')
         destination, data = script.base58_check_encode(pubkeyhash, config.ADDRESSVERSION), None
@@ -754,14 +756,15 @@ def decode_scripthash(asm):
 def decode_checkmultisig(asm, ctx):
     pubkeys, signatures_required = script.get_checkmultisig(asm)
     chunk = b''
+    magic_word_prefix = get_value_by_block_index("magic_word_prefix").encode()
     for pubkey in pubkeys[:-1]:     # (No data in last pubkey.)
         chunk += pubkey[1:-1]       # Skip sign byte and nonce byte.
     chunk = arc4_decrypt(chunk, ctx)
-    if chunk[1:len(get_value_by_block_index("magic_word_prefix")) + 1] == get_value_by_block_index("magic_word_prefix"):        # Data
+    if chunk[1:len(magic_word_prefix) + 1] == magic_word_prefix:        # Data
         # Padding byte in each output (instead of just in the last one) so that encoding methods may be mixed. Also, it’s just not very much data.
         chunk_length = chunk[0]
         chunk = chunk[1:chunk_length + 1]
-        destination, data = None, chunk[len(get_value_by_block_index("magic_word_prefix")):]
+        destination, data = None, chunk[len(magic_word_prefix):]
     else:                                                       # Destination
         pubkeyhashes = [script.pubkey_to_pubkeyhash(pubkey) for pubkey in pubkeys]
         destination, data = script.construct_array(signatures_required, pubkeyhashes, len(pubkeyhashes)), None

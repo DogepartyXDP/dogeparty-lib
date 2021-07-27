@@ -299,6 +299,8 @@ def construct (db, tx_info, encoding='auto',
                old_style_api=None, segwit=False,
                p2sh_source_multisig_pubkeys=None, p2sh_source_multisig_pubkeys_required=None, p2sh_pretx_txid=None,):
 
+    magic_word_prefix = get_value_by_block_index("magic_word_prefix").encode()
+
     if estimate_fee_per_kb is None:
         estimate_fee_per_kb = config.ESTIMATE_FEE_PER_KB
 
@@ -343,7 +345,7 @@ def construct (db, tx_info, encoding='auto',
         desired_encoding = encoding
         # Data encoding methods (choose and validate).
         if desired_encoding == 'auto':
-            if len(data) + len(get_value_by_block_index("magic_word_prefix")) <= config.OP_RETURN_MAX_SIZE:
+            if len(data) + len(magic_word_prefix) <= config.OP_RETURN_MAX_SIZE:
                 encoding = 'opreturn'
             else:
                 encoding = 'p2sh' if not old_style_api and util.enabled('p2sh_encoding') else 'multisig'  # p2sh is not possible with old_style_api
@@ -411,7 +413,7 @@ def construct (db, tx_info, encoding='auto',
             chunk_size = p2sh_encoding.maximum_data_chunk_size()
         elif encoding == 'opreturn':
             chunk_size = config.OP_RETURN_MAX_SIZE
-            if len(data) + len(get_value_by_block_index("magic_word_prefix")) > chunk_size:
+            if len(data) + len(magic_word_prefix) > chunk_size:
                 raise exceptions.TransactionError('One `OP_RETURN` output per transaction.')
         data_array = list(chunks(data, chunk_size))
 
@@ -450,7 +452,7 @@ def construct (db, tx_info, encoding='auto',
         data_output_size = 81       # 71 for the data
     elif encoding == 'opreturn':
         # prefix + data + 10 bytes script overhead
-        data_output_size = len(get_value_by_block_index("magic_word_prefix")) + 10
+        data_output_size = len(magic_word_prefix) + 10
         if data is not None:
             data_output_size = data_output_size + len(data)
     else:

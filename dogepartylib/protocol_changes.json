@@ -273,10 +273,10 @@
     "testnet_block_index": 1666625
   },
   "magic_word_prefix": {
-    "value_before": b'CNTRPRTY',
-    "value_after": b'DOGEPRTY',
-    "testnet_value_before": b'XX',
-    "testnet_value_after": b'XX',
+    "value_before": 'CNTRPRTY',
+    "value_after": 'DOGEPRTY',
+    "testnet_value_before": 'XX',
+    "testnet_value_after": 'XX',
     "block_index": 3829071,
     "testnet_block_index": 3256486
   }

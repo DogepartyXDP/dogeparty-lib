@@ -18,7 +18,7 @@ from dogepartylib.lib import script
 from dogepartylib.lib import exceptions
 
 def maximum_data_chunk_size():
-    return bitcoinlib.core.script.MAX_SCRIPT_ELEMENT_SIZE - len(get_value_by_block_index("magic_word_prefix")) - 44 # Redeemscript size for p2pkh addresses, multisig won't work here
+    return bitcoinlib.core.script.MAX_SCRIPT_ELEMENT_SIZE - len(get_value_by_block_index("magic_word_prefix").encode()) - 44 # Redeemscript size for p2pkh addresses, multisig won't work here
 
 def calculate_outputs(destination_outputs, data_array, fee_per_kb):
     datatx_size = 10  # 10 base
@@ -51,6 +51,7 @@ def decode_p2sh_input(asm, p2sh_is_segwit=False):
     ''' Looks at the scriptSig for the input of the p2sh-encoded data transaction
         [signature] [data] [OP_HASH160 ... OP_EQUAL]
     '''
+    magic_word_prefix = get_value_by_block_index("magic_word_prefix").encode()
     pubkey, source, redeem_script_is_valid, found_data = decode_data_redeem_script(asm[-1], p2sh_is_segwit)
     if redeem_script_is_valid:
         # this is a signed transaction, so we got {sig[,sig]} {datachunk} {redeemScript}
@@ -66,8 +67,8 @@ def decode_p2sh_input(asm, p2sh_is_segwit=False):
         datachunk, redeemScript, _substituteScript = asm
 
     data = datachunk
-    if data[:len(get_value_by_block_index("magic_word_prefix"))] == get_value_by_block_index("magic_word_prefix"):
-        data = data[len(get_value_by_block_index("magic_word_prefix")):]
+    if data[:len(magic_word_prefix)] == magic_word_prefix:
+        data = data[len(magic_word_prefix):]
     else:
         if data == b'':
             return source, None, None

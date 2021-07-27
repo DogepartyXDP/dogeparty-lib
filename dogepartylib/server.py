@@ -358,11 +358,11 @@ def initialise_config(database_file=None, log_file=None, api_log_file=None,
         config.FORCE = False
 
     # Encoding
-    if config.TESTCOIN:
-        config.PREFIX = b'XX'                   # 2 bytes (possibly accidentally created)
-    else:
-        config.PREFIX = b'CNTRPRTY'             # 8 bytes
-        #config.PREFIX = b'DOGEPRTY'             # 8 bytes
+    #if config.TESTCOIN:
+    #    config.PREFIX = b'XX'                   # 2 bytes (possibly accidentally created)
+    #else:
+    #    config.PREFIX = b'CNTRPRTY'             # 8 bytes
+    #    config.PREFIX = b'DOGEPRTY'             # 8 bytes
 
     # (more) Testnet
     if config.TESTNET:
@@ -373,7 +373,7 @@ def initialise_config(database_file=None, log_file=None, api_log_file=None,
             config.BLOCK_FIRST = config.BLOCK_FIRST_TESTNET_TESTCOIN
             config.BURN_START = config.BURN_START_TESTNET_TESTCOIN
             config.BURN_END = config.BURN_END_TESTNET_TESTCOIN
-            config.UNSPENDABLE = config.UNSPENDABLE_TESTNET
+            #config.UNSPENDABLE = config.UNSPENDABLE_TESTNET
             config.P2SH_DUST_RETURN_PUBKEY = p2sh_dust_return_pubkey
         else:
             config.ADDRESSVERSION = config.ADDRESSVERSION_TESTNET
@@ -381,7 +381,7 @@ def initialise_config(database_file=None, log_file=None, api_log_file=None,
             config.BLOCK_FIRST = config.BLOCK_FIRST_TESTNET
             config.BURN_START = config.BURN_START_TESTNET
             config.BURN_END = config.BURN_END_TESTNET
-            config.UNSPENDABLE = config.UNSPENDABLE_TESTNET
+            #config.UNSPENDABLE = config.UNSPENDABLE_TESTNET
             config.P2SH_DUST_RETURN_PUBKEY = p2sh_dust_return_pubkey
     elif config.CUSTOMNET:
         custom_args = customnet.split('|')
@@ -393,7 +393,7 @@ def initialise_config(database_file=None, log_file=None, api_log_file=None,
             config.BLOCK_FIRST = config.BLOCK_FIRST_REGTEST
             config.BURN_START = config.BURN_START_REGTEST
             config.BURN_END = config.BURN_END_REGTEST
-            config.UNSPENDABLE = custom_args[0]
+            #config.UNSPENDABLE = custom_args[0]
             config.P2SH_DUST_RETURN_PUBKEY = p2sh_dust_return_pubkey
         else:
             raise "Custom net parameter needs to be like UNSPENDABLE_ADDRESS|ADDRESSVERSION|P2SH_ADDRESSVERSION (version bytes in HH format)"
@@ -405,7 +405,7 @@ def initialise_config(database_file=None, log_file=None, api_log_file=None,
             config.BLOCK_FIRST = config.BLOCK_FIRST_REGTEST_TESTCOIN
             config.BURN_START = config.BURN_START_REGTEST_TESTCOIN
             config.BURN_END = config.BURN_END_REGTEST_TESTCOIN
-            config.UNSPENDABLE = config.UNSPENDABLE_REGTEST
+            #config.UNSPENDABLE = config.UNSPENDABLE_REGTEST
             config.P2SH_DUST_RETURN_PUBKEY = p2sh_dust_return_pubkey
         else:
             config.ADDRESSVERSION = config.ADDRESSVERSION_REGTEST
@@ -413,7 +413,7 @@ def initialise_config(database_file=None, log_file=None, api_log_file=None,
             config.BLOCK_FIRST = config.BLOCK_FIRST_REGTEST
             config.BURN_START = config.BURN_START_REGTEST
             config.BURN_END = config.BURN_END_REGTEST
-            config.UNSPENDABLE = config.UNSPENDABLE_REGTEST
+            #config.UNSPENDABLE = config.UNSPENDABLE_REGTEST
             config.P2SH_DUST_RETURN_PUBKEY = p2sh_dust_return_pubkey
     else:
         config.MAGIC_BYTES = config.MAGIC_BYTES_MAINNET
@@ -423,7 +423,7 @@ def initialise_config(database_file=None, log_file=None, api_log_file=None,
             config.BLOCK_FIRST = config.BLOCK_FIRST_MAINNET_TESTCOIN
             config.BURN_START = config.BURN_START_MAINNET_TESTCOIN
             config.BURN_END = config.BURN_END_MAINNET_TESTCOIN
-            config.UNSPENDABLE = config.UNSPENDABLE_MAINNET
+            #config.UNSPENDABLE = config.UNSPENDABLE_MAINNET
             config.P2SH_DUST_RETURN_PUBKEY = p2sh_dust_return_pubkey
         else:
             config.ADDRESSVERSION = config.ADDRESSVERSION_MAINNET
@@ -431,7 +431,7 @@ def initialise_config(database_file=None, log_file=None, api_log_file=None,
             config.BLOCK_FIRST = config.BLOCK_FIRST_MAINNET
             config.BURN_START = config.BURN_START_MAINNET
             config.BURN_END = config.BURN_END_MAINNET
-            config.UNSPENDABLE = config.UNSPENDABLE_MAINNET
+            #config.UNSPENDABLE = config.UNSPENDABLE_MAINNET
             config.P2SH_DUST_RETURN_PUBKEY = p2sh_dust_return_pubkey
 
     # Misc

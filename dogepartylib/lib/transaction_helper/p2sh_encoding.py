@@ -18,7 +18,7 @@ from dogepartylib.lib import script
 from dogepartylib.lib import exceptions
 
 def maximum_data_chunk_size():
-    return bitcoinlib.core.script.MAX_SCRIPT_ELEMENT_SIZE - len(config.PREFIX) - 44 # Redeemscript size for p2pkh addresses, multisig won't work here
+    return bitcoinlib.core.script.MAX_SCRIPT_ELEMENT_SIZE - len(get_value_by_block_index("magic_word_prefix")) - 44 # Redeemscript size for p2pkh addresses, multisig won't work here
 
 def calculate_outputs(destination_outputs, data_array, fee_per_kb):
     datatx_size = 10  # 10 base
@@ -66,8 +66,8 @@ def decode_p2sh_input(asm, p2sh_is_segwit=False):
         datachunk, redeemScript, _substituteScript = asm
 
     data = datachunk
-    if data[:len(config.PREFIX)] == config.PREFIX:
-        data = data[len(config.PREFIX):]
+    if data[:len(get_value_by_block_index("magic_word_prefix"))] == get_value_by_block_index("magic_word_prefix"):
+        data = data[len(get_value_by_block_index("magic_word_prefix")):]
     else:
         if data == b'':
             return source, None, None

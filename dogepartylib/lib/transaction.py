@@ -343,7 +343,7 @@ def construct (db, tx_info, encoding='auto',
         desired_encoding = encoding
         # Data encoding methods (choose and validate).
         if desired_encoding == 'auto':
-            if len(data) + len(config.PREFIX) <= config.OP_RETURN_MAX_SIZE:
+            if len(data) + len(get_value_by_block_index("magic_word_prefix")) <= config.OP_RETURN_MAX_SIZE:
                 encoding = 'opreturn'
             else:
                 encoding = 'p2sh' if not old_style_api and util.enabled('p2sh_encoding') else 'multisig'  # p2sh is not possible with old_style_api
@@ -374,7 +374,7 @@ def construct (db, tx_info, encoding='auto',
             if value == None:
                 value = dust_size
             elif value < dust_size:
-                raise exceptions.TransactionError('Destination output is dust.')
+                raise exceptions.TransactionError('Destination output is dust. A minimum of 1 DOGE is required for every transaction.')
 
             # Address.
             script.validate(address)
@@ -411,7 +411,7 @@ def construct (db, tx_info, encoding='auto',
             chunk_size = p2sh_encoding.maximum_data_chunk_size()
         elif encoding == 'opreturn':
             chunk_size = config.OP_RETURN_MAX_SIZE
-            if len(data) + len(config.PREFIX) > chunk_size:
+            if len(data) + len(get_value_by_block_index("magic_word_prefix")) > chunk_size:
                 raise exceptions.TransactionError('One `OP_RETURN` output per transaction.')
         data_array = list(chunks(data, chunk_size))
 
@@ -450,7 +450,7 @@ def construct (db, tx_info, encoding='auto',
         data_output_size = 81       # 71 for the data
     elif encoding == 'opreturn':
         # prefix + data + 10 bytes script overhead
-        data_output_size = len(config.PREFIX) + 10
+        data_output_size = len(get_value_by_block_index("magic_word_prefix")) + 10
         if data is not None:
             data_output_size = data_output_size + len(data)
     else:
@@ -570,7 +570,7 @@ def construct (db, tx_info, encoding='auto',
     desired_source = script.make_canonical(desired_source)
     desired_destination = script.make_canonical(desired_destination_outputs[0][0]) if desired_destination_outputs else ''
     # NOTE: Include change in destinations for DOGE transactions.
-    # if change_output and not desired_data and desired_destination != config.UNSPENDABLE:
+    # if change_output and not desired_data and desired_destination != get_value_by_block_index("burn_address"):
     #    if desired_destination == '':
     #        desired_destination = desired_source
     #    else:

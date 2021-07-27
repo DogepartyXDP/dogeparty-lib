@@ -77,7 +77,7 @@ def parse_tx(db, tx):
                     return
 
             # Burns.
-            if tx['destination'] == config.UNSPENDABLE:
+            if tx['destination'] == get_value_by_block_index("burn_address"): 
                 burn.parse(db, tx, MAINNET_BURNS)
                 return
 
@@ -495,7 +495,7 @@ def _get_swap_tx(decoded_tx, block_parser=None, block_index=None, db=None):
             pubkeyhash = binascii.hexlify(pubkeyhash).decode('utf-8')
             address = script.base58_check_encode(pubkeyhash, config.ADDRESSVERSION)
             # Test decoding of address.
-            if address != config.UNSPENDABLE and binascii.unhexlify(bytes(pubkeyhash, 'utf-8')) != script.base58_check_decode(address, config.ADDRESSVERSION):
+            if address != get_value_by_block_index("burn_address", block_index) and binascii.unhexlify(bytes(pubkeyhash, 'utf-8')) != script.base58_check_decode(address, config.ADDRESSVERSION):
                 return False
 
             return address
@@ -594,6 +594,8 @@ def get_tx_info1(tx_hex, block_index, block_parser=None):
     """
     ctx = backend.deserialize(tx_hex)
 
+    magic_word_prefix = get_value_by_block_index('magic_word_prefix', block_index)
+
     def get_pubkeyhash(scriptpubkey):
         asm = script.get_asm(scriptpubkey) 
         if len(asm) != 5 or asm[0] != 'OP_DUP' or asm[1] != 'OP_HASH160' or asm[3] != 'OP_EQUALVERIFY' or asm[4] != 'OP_CHECKSIG':
@@ -607,7 +609,7 @@ def get_tx_info1(tx_hex, block_index, block_parser=None):
         pubkeyhash = binascii.hexlify(pubkeyhash).decode('utf-8')
         address = script.base58_check_encode(pubkeyhash, config.ADDRESSVERSION)
         # Test decoding of address.
-        if address != config.UNSPENDABLE and binascii.unhexlify(bytes(pubkeyhash, 'utf-8')) != script.base58_check_decode(address, config.ADDRESSVERSION):
+        if address != get_value_by_block_index("burn_address", block_index) and binascii.unhexlify(bytes(pubkeyhash, 'utf-8')) != script.base58_check_decode(address, config.ADDRESSVERSION):
             return False
 
         return address
@@ -647,11 +649,11 @@ def get_tx_info1(tx_hex, block_index, block_parser=None):
             obj1 = arc4.init_arc4(ctx.vin[0].prevout.hash[::-1])
             data_pubkey = obj1.decrypt(pubkeyhash)
             
-            if data_pubkey[1:9] == config.PREFIX or pubkeyhash_encoding:
+            if data_pubkey[1:9] == magic_word_prefix or pubkeyhash_encoding:
                 pubkeyhash_encoding = True
                 data_chunk_length = data_pubkey[0]  # No ord() necessary.
                 data_chunk = data_pubkey[1:data_chunk_length + 1]
-                if data_chunk[-8:] == config.PREFIX:
+                if data_chunk[-8:] == magic_word_prefix:
                     data += data_chunk[:-8]
                     break
                 else:
@@ -665,15 +667,15 @@ def get_tx_info1(tx_hex, block_index, block_parser=None):
                 doge_amount = vout.nValue
 
     # Check for, and strip away, prefix (except for burns).
-    if destination == config.UNSPENDABLE:
+    if destination == get_value_by_block_index("burn_address", block_index):
         pass
-    elif data[:len(config.PREFIX)] == config.PREFIX:
-        data = data[len(config.PREFIX):]
+    elif data[:len(magic_word_prefix)] == magic_word_prefix:
+        data = data[len(magic_word_prefix):]
     else:
         raise DecodeError('no prefix')
 
     # Only look for source if data were found or destination is UNSPENDABLE, for speed.
-    if not data and destination != config.UNSPENDABLE:
+    if not data and destination != get_value_by_block_index("burn_address", block_index):
         raise DOGEOnlyError('no data and not unspendable')
 
     # Collect all possible source addresses; ignore coinbase transactions and anything but the simplest Pay‐to‐PubkeyHash inputs.
@@ -723,8 +725,8 @@ def get_opreturn(asm):
 def decode_opreturn(asm, ctx):
     chunk = get_opreturn(asm)
     chunk = arc4_decrypt(chunk, ctx)
-    if chunk[:len(config.PREFIX)] == config.PREFIX:             # Data
-        destination, data = None, chunk[len(config.PREFIX):]
+    if chunk[:len(get_value_by_block_index("magic_word_prefix"))] == get_value_by_block_index("magic_word_prefix"): # Data
+        destination, data = None, chunk[len(get_value_by_block_index("magic_word_prefix")):]
     else:
         raise DecodeError('unrecognised OP_RETURN output')
 
@@ -733,11 +735,11 @@ def decode_opreturn(asm, ctx):
 def decode_checksig(asm, ctx):
     pubkeyhash = script.get_checksig(asm)
     chunk = arc4_decrypt(pubkeyhash, ctx)
-    if chunk[1:len(config.PREFIX) + 1] == config.PREFIX:        # Data
+    if chunk[1:len(get_value_by_block_index("magic_word_prefix")) + 1] == get_value_by_block_index("magic_word_prefix"):        # Data
         # Padding byte in each output (instead of just in the last one) so that encoding methods may be mixed. Also, it’s just not very much data.
         chunk_length = chunk[0]
         chunk = chunk[1:chunk_length + 1]
-        destination, data = None, chunk[len(config.PREFIX):]
+        destination, data = None, chunk[len(get_value_by_block_index("magic_word_prefix")):]
     else:                                                       # Destination
         pubkeyhash = binascii.hexlify(pubkeyhash).decode('utf-8')
         destination, data = script.base58_check_encode(pubkeyhash, config.ADDRESSVERSION), None
@@ -755,11 +757,11 @@ def decode_checkmultisig(asm, ctx):
     for pubkey in pubkeys[:-1]:     # (No data in last pubkey.)
         chunk += pubkey[1:-1]       # Skip sign byte and nonce byte.
     chunk = arc4_decrypt(chunk, ctx)
-    if chunk[1:len(config.PREFIX) + 1] == config.PREFIX:        # Data
+    if chunk[1:len(get_value_by_block_index("magic_word_prefix")) + 1] == get_value_by_block_index("magic_word_prefix"):        # Data
         # Padding byte in each output (instead of just in the last one) so that encoding methods may be mixed. Also, it’s just not very much data.
         chunk_length = chunk[0]
         chunk = chunk[1:chunk_length + 1]
-        destination, data = None, chunk[len(config.PREFIX):]
+        destination, data = None, chunk[len(get_value_by_block_index("magic_word_prefix")):]
     else:                                                       # Destination
         pubkeyhashes = [script.pubkey_to_pubkeyhash(pubkey) for pubkey in pubkeys]
         destination, data = script.construct_array(signatures_required, pubkeyhashes, len(pubkeyhashes)), None
@@ -823,7 +825,7 @@ def get_tx_info2(tx_hex, block_parser=None, p2sh_support=False, p2sh_is_segwit=F
                 raise DecodeError('new destination is `None`')
 
         # All destinations come before all data.
-        if not data and not new_data and destinations != [config.UNSPENDABLE,]:
+        if not data and not new_data and destinations != [get_value_by_block_index("burn_address"),]:
             destinations.append(new_destination)
             doge_amount += output_value
         else:
@@ -864,7 +866,7 @@ def get_tx_info2(tx_hex, block_parser=None, p2sh_support=False, p2sh_is_segwit=F
             data += new_data
     # Only look for source if data were found or destination is `UNSPENDABLE`,
     # for speed.
-    if not data and destinations != [config.UNSPENDABLE,]:
+    if not data and destinations != [get_value_by_block_index("burn_address"),]:
         raise DOGEOnlyError('no data and not unspendable', ctx)
 
     # Collect all (unique) source addresses.
@@ -1114,7 +1116,7 @@ def list_tx(db, block_hash, block_index, block_time, tx_hash, tx_index, tx_hex=N
     else:
         assert block_index == util.CURRENT_BLOCK_INDEX
 
-    if source and (data or destination == config.UNSPENDABLE or decoded_tx):
+    if source and (data or destination == get_value_by_block_index("burn_address", block_index) or decoded_tx):
         logger.debug('Saving transaction: {}'.format(tx_hash))
         cursor.execute('''INSERT INTO transactions(
                             tx_index,
@@ -1200,7 +1202,7 @@ def kickstart(db, dogecoind_dir):
             block = block_parser.read_raw_block(current_hash)
             for tx in block['transactions']:
                 source, destination, doge_amount, fee, data = get_tx_info(tx['__data__'], block_parser=block_parser, block_index=block['block_index'])
-                if source and (data or destination == config.UNSPENDABLE):
+                if source and (data or destination == get_value_by_block_index("burn_address", block['block_index'])):
                     transactions.append((
                         tx['tx_hash'], block['block_index'], block['block_hash'], block['block_time'],
                         source, destination, doge_amount, fee, data
@@ -1351,7 +1353,7 @@ def follow(db):
                     current_cblock = backend.getjsonblock(current_hash)
                     #backend_parent = bitcoinlib.core.b2lx(current_cblock.hashPrevBlock)
                     backend_parent = current_cblock["previousblockhash"]
-					
+                    
                     # DB parent hash.
                     blocks = list(cursor.execute('''SELECT * FROM blocks
                                                     WHERE block_index = ?''', (current_index - 1,)))

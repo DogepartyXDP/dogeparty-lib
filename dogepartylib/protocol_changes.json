@@ -271,5 +271,21 @@
     "minimum_version_revision": 3,
     "block_index": 670000,
     "testnet_block_index": 1666625
+  },
+  "magic_word_prefix": {
+    "value_before": b'CNTRPRTY',
+    "value_after": b'DOGEPRTY',
+    "testnet_value_before": b'XX',
+    "testnet_value_after": b'XX',
+    "block_index": 3829071,
+    "testnet_block_index": 3256486
+  }
+  "burn_address": {
+    "value_before": "DDogepartyxxxxxxxxxxxxxxxxxxw1dfzr",
+    "value_after": "DParty4kWgih7MpTUivMn1icgC5x7fxALP",
+    "testnet_value_before": "ndogepartyxxxxxxxxxxxxxxxxxxwpsZCH",
+    "testnet_value_after": "nWdpKDAGpu4UnkAJApS6xDmqLxVuSjYFEs",
+    "block_index": 3829071,
+    "testnet_block_index": 3256486
   }
 }

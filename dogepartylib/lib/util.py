@@ -796,6 +796,28 @@ def enabled(change_name, block_index=None):
     else:
         return False
 
+def get_value_by_block_index(change_name, block_index=None):
+    if config.REGTEST:
+        return PROTOCOL_CHANGES[change_name]["testnet_value_after"]
+    
+    if config.TESTNET:
+        index_name = 'testnet_block_index'
+        value_prefix = 'testnet_'
+    else:
+        index_name = 'block_index'
+        value_prefix = ''
+
+    change_block_index = PROTOCOL_CHANGES[change_name][index_name]
+
+    if not block_index:
+        block_index = CURRENT_BLOCK_INDEX
+    
+    if block_index >= change_block_index:
+        return PROTOCOL_CHANGES[change_name][value_prefix+'value_after']        
+    else:
+        return PROTOCOL_CHANGES[change_name][value_prefix+'value_before']
+
+
 def transfer(db, source, destination, asset, quantity, action, event):
     """Transfer quantity of asset from source to destination."""
     debit(db, source, asset, quantity, action=action, event=event)

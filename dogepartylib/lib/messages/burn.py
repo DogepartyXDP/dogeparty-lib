@@ -37,7 +37,7 @@ def validate (db, source, destination, quantity, block_index, overburn=False):
     problems = []
 
     # Check destination address.
-    if destination != config.UNSPENDABLE:
+    if destination != get_value_by_block_index("burn_address", block_index):
         problems.append('wrong destination address')
 
     if not isinstance(quantity, int):
@@ -56,7 +56,7 @@ def validate (db, source, destination, quantity, block_index, overburn=False):
 
 def compose (db, source, quantity, overburn=False):
     cursor = db.cursor()
-    destination = config.UNSPENDABLE
+    destination = get_value_by_block_index("burn_address")
     problems = validate(db, source, destination, quantity, util.CURRENT_BLOCK_INDEX, overburn=overburn)
     if problems: raise exceptions.ComposeError(problems)
 

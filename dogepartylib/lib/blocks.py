@@ -77,7 +77,7 @@ def parse_tx(db, tx):
                     return
 
             # Burns.
-            if tx['destination'] == get_value_by_block_index("burn_address"): 
+            if tx['destination'] == util.get_value_by_block_index("burn_address"): 
                 burn.parse(db, tx, MAINNET_BURNS)
                 return
 
@@ -495,7 +495,7 @@ def _get_swap_tx(decoded_tx, block_parser=None, block_index=None, db=None):
             pubkeyhash = binascii.hexlify(pubkeyhash).decode('utf-8')
             address = script.base58_check_encode(pubkeyhash, config.ADDRESSVERSION)
             # Test decoding of address.
-            if address != get_value_by_block_index("burn_address", block_index) and binascii.unhexlify(bytes(pubkeyhash, 'utf-8')) != script.base58_check_decode(address, config.ADDRESSVERSION):
+            if address != util.get_value_by_block_index("burn_address", block_index) and binascii.unhexlify(bytes(pubkeyhash, 'utf-8')) != script.base58_check_decode(address, config.ADDRESSVERSION):
                 return False
 
             return address
@@ -609,7 +609,7 @@ def get_tx_info1(tx_hex, block_index, block_parser=None):
         pubkeyhash = binascii.hexlify(pubkeyhash).decode('utf-8')
         address = script.base58_check_encode(pubkeyhash, config.ADDRESSVERSION)
         # Test decoding of address.
-        if address != get_value_by_block_index("burn_address", block_index) and binascii.unhexlify(bytes(pubkeyhash, 'utf-8')) != script.base58_check_decode(address, config.ADDRESSVERSION):
+        if address != util.get_value_by_block_index("burn_address", block_index) and binascii.unhexlify(bytes(pubkeyhash, 'utf-8')) != script.base58_check_decode(address, config.ADDRESSVERSION):
             return False
 
         return address
@@ -667,7 +667,7 @@ def get_tx_info1(tx_hex, block_index, block_parser=None):
                 doge_amount = vout.nValue
 
     # Check for, and strip away, prefix (except for burns).
-    if destination == get_value_by_block_index("burn_address", block_index):
+    if destination == util.get_value_by_block_index("burn_address", block_index):
         pass
     elif data[:len(magic_word_prefix)] == magic_word_prefix:
         data = data[len(magic_word_prefix):]
@@ -675,7 +675,7 @@ def get_tx_info1(tx_hex, block_index, block_parser=None):
         raise DecodeError('no prefix')
 
     # Only look for source if data were found or destination is UNSPENDABLE, for speed.
-    if not data and destination != get_value_by_block_index("burn_address", block_index):
+    if not data and destination != util.get_value_by_block_index("burn_address", block_index):
         raise DOGEOnlyError('no data and not unspendable')
 
     # Collect all possible source addresses; ignore coinbase transactions and anything but the simplest Pay‐to‐PubkeyHash inputs.
@@ -828,7 +828,7 @@ def get_tx_info2(tx_hex, block_parser=None, p2sh_support=False, p2sh_is_segwit=F
                 raise DecodeError('new destination is `None`')
 
         # All destinations come before all data.
-        if not data and not new_data and destinations != [get_value_by_block_index("burn_address"),]:
+        if not data and not new_data and destinations != [util.get_value_by_block_index("burn_address"),]:
             destinations.append(new_destination)
             doge_amount += output_value
         else:
@@ -869,7 +869,7 @@ def get_tx_info2(tx_hex, block_parser=None, p2sh_support=False, p2sh_is_segwit=F
             data += new_data
     # Only look for source if data were found or destination is `UNSPENDABLE`,
     # for speed.
-    if not data and destinations != [get_value_by_block_index("burn_address"),]:
+    if not data and destinations != [util.get_value_by_block_index("burn_address"),]:
         raise DOGEOnlyError('no data and not unspendable', ctx)
 
     # Collect all (unique) source addresses.
@@ -1119,7 +1119,7 @@ def list_tx(db, block_hash, block_index, block_time, tx_hash, tx_index, tx_hex=N
     else:
         assert block_index == util.CURRENT_BLOCK_INDEX
 
-    if source and (data or destination == get_value_by_block_index("burn_address", block_index) or decoded_tx):
+    if source and (data or destination == util.get_value_by_block_index("burn_address", block_index) or decoded_tx):
         logger.debug('Saving transaction: {}'.format(tx_hash))
         cursor.execute('''INSERT INTO transactions(
                             tx_index,
@@ -1205,7 +1205,7 @@ def kickstart(db, dogecoind_dir):
             block = block_parser.read_raw_block(current_hash)
             for tx in block['transactions']:
                 source, destination, doge_amount, fee, data = get_tx_info(tx['__data__'], block_parser=block_parser, block_index=block['block_index'])
-                if source and (data or destination == get_value_by_block_index("burn_address", block['block_index'])):
+                if source and (data or destination == util.get_value_by_block_index("burn_address", block['block_index'])):
                     transactions.append((
                         tx['tx_hash'], block['block_index'], block['block_hash'], block['block_time'],
                         source, destination, doge_amount, fee, data

@@ -572,7 +572,7 @@ def construct (db, tx_info, encoding='auto',
     desired_source = script.make_canonical(desired_source)
     desired_destination = script.make_canonical(desired_destination_outputs[0][0]) if desired_destination_outputs else ''
     # NOTE: Include change in destinations for DOGE transactions.
-    # if change_output and not desired_data and desired_destination != get_value_by_block_index("burn_address"):
+    # if change_output and not desired_data and desired_destination != util.get_value_by_block_index("burn_address"):
     #    if desired_destination == '':
     #        desired_destination = desired_source
     #    else:

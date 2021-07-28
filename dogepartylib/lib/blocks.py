@@ -580,12 +580,12 @@ def _get_tx_info(tx_hex, block_parser=None, block_index=None, p2sh_is_segwit=Fal
     """Get the transaction info. Calls one of two subfunctions depending on signature type."""
     if not block_index:
         block_index = util.CURRENT_BLOCK_INDEX
-    #if util.enabled('p2sh_addresses', block_index=block_index):   # Protocol change.
-    #    return  get_tx_info3(tx_hex, block_parser=block_parser, p2sh_is_segwit=p2sh_is_segwit)
-    #elif util.enabled('multisig_addresses', block_index=block_index):   # Protocol change.
-    #    return get_tx_info2(tx_hex, block_parser=block_parser)
-    #else:
-    return get_tx_info1(tx_hex, block_index, block_parser=block_parser)
+    if util.enabled('p2sh_addresses', block_index=block_index):   # Protocol change.
+        return  get_tx_info3(tx_hex, block_parser=block_parser, p2sh_is_segwit=p2sh_is_segwit)
+    elif util.enabled('multisig_addresses', block_index=block_index):   # Protocol change.
+        return get_tx_info2(tx_hex, block_parser=block_parser)
+    else:
+        return get_tx_info1(tx_hex, block_index, block_parser=block_parser)
 
 def get_tx_info1(tx_hex, block_index, block_parser=None):
     """Get singlesig transaction info.
@@ -649,12 +649,12 @@ def get_tx_info1(tx_hex, block_index, block_parser=None):
             obj1 = arc4.init_arc4(ctx.vin[0].prevout.hash[::-1])
             data_pubkey = obj1.decrypt(pubkeyhash)
             
-            if data_pubkey[1:9] == magic_word_prefix or pubkeyhash_encoding:
+            if data_pubkey[1:len(magic_word_prefix)+1] == magic_word_prefix or pubkeyhash_encoding:
                 pubkeyhash_encoding = True
                 data_chunk_length = data_pubkey[0]  # No ord() necessary.
                 data_chunk = data_pubkey[1:data_chunk_length + 1]
-                if data_chunk[-8:] == magic_word_prefix:
-                    data += data_chunk[:-8]
+                if data_chunk[-len(magic_word_prefix):] == magic_word_prefix:
+                    data += data_chunk[:-len(magic_word_prefix)]
                     break
                 else:
                     data += data_chunk

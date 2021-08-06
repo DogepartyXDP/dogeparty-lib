@@ -433,9 +433,9 @@ def parse (db, tx, message):
         if problems: status = 'invalid: ' + '; '.join(problems)
 
         if util.enabled('doge_order_minimum'):
-            min_doge_quantity = 0.001 * config.UNIT  # 0.001 DOGE
+            min_doge_quantity = 1 * config.UNIT  # 1 DOGE
             if util.enabled('doge_order_minimum_adjustment_1'):
-                min_doge_quantity = 0.00001 * config.UNIT  # 0.00001 DOGE
+                min_doge_quantity = 1 * config.UNIT  # 1 DOGE
 
             if (give_asset == config.DOGE and give_quantity < min_doge_quantity) or (get_asset == config.DOGE and get_quantity < min_doge_quantity):
                 if problems:
@@ -695,7 +695,7 @@ def match (db, tx, block_index=None):
 
             # Calculate when the match will expire.
             if block_index >= 308000 or config.TESTNET or config.REGTEST:      # Protocol change.
-                match_expire_index = block_index + 20
+                match_expire_index = block_index + 120
             elif block_index >= 286500 or config.TESTNET or config.REGTEST:    # Protocol change.
                 match_expire_index = block_index + 10
             else:

@@ -390,12 +390,12 @@ def compose (db, source, give_asset, give_quantity, get_asset, get_quantity, exp
     get_id = util.get_asset_id(db, get_asset, util.CURRENT_BLOCK_INDEX)
     data = message_type.pack(ID)
     data += struct.pack(
-	   #FORMAT,
-	   util.get_value_by_block_index("order_serialization_format"),
-	   give_id,
-	   give_quantity,
-	   get_id,
-	   get_quantity,
+       #FORMAT,
+       util.get_value_by_block_index("order_serialization_format"),
+       give_id,
+       give_quantity,
+       get_id,
+       get_quantity,
        expiration, fee_required)
     cursor.close()
     return (source, [], data)
@@ -408,10 +408,10 @@ def parse (db, tx, message):
         if len(message) != LENGTH:
             raise exceptions.UnpackError
         give_id, give_quantity, get_id, get_quantity, expiration, fee_required = struct.unpack(
-		    #FORMAT,
-			util.get_value_by_block_index("order_serialization_format", tx['block_index']),
-	   		message
-		)
+            #FORMAT,
+            util.get_value_by_block_index("order_serialization_format", tx['block_index']),
+            message
+        )
         give_asset = util.get_asset_name(db, give_id, tx['block_index'])
         get_asset = util.get_asset_name(db, get_id, tx['block_index'])
         status = 'open'

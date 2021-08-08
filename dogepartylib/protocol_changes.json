@@ -295,5 +295,13 @@
     "testnet_value_after": ">QQQQIQ",
     "block_index": 3829071,
     "testnet_block_index": 3280349
-  }
+  },
+  "order_serialization_length": {
+    "value_before": 42,
+    "value_after": 44,
+    "testnet_value_before": 42,
+    "testnet_value_after": 44,
+    "block_index": 3829071,
+    "testnet_block_index": 3280349
+  }  
 }

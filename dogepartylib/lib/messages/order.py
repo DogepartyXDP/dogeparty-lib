@@ -405,13 +405,14 @@ def parse (db, tx, message):
 
     # Unpack message.
     try:
-        if len(message) != LENGTH:
+        if len(message) != util.get_value_by_block_index("order_serialization_length", tx['block_index']):
             raise exceptions.UnpackError
+            
         give_id, give_quantity, get_id, get_quantity, expiration, fee_required = struct.unpack(
             #FORMAT,
             util.get_value_by_block_index("order_serialization_format", tx['block_index']),
             message
-        )
+        )       
         give_asset = util.get_asset_name(db, give_id, tx['block_index'])
         get_asset = util.get_asset_name(db, get_id, tx['block_index'])
         status = 'open'

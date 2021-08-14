@@ -303,5 +303,37 @@
     "testnet_value_after": 44,
     "block_index": 3829071,
     "testnet_block_index": 3280349
-  }  
+  },
+  "issuance_asset_serialization_format": {
+    "value_before": ">QQ??If",
+    "value_after": ">QQ???If",
+    "testnet_value_before": ">QQ??If",
+    "testnet_value_after": ">QQ???If",
+    "block_index": 3852387,
+    "testnet_block_index": 3285682
+  },
+  "issuance_asset_serialization_length": {
+    "value_before": 26,
+    "value_after": 27,
+    "testnet_value_before": 26,
+    "testnet_value_after": 27,
+    "block_index": 3852387,
+    "testnet_block_index": 3285682
+  },
+  "issuance_subasset_serialization_format": {
+    "value_before": ">QQ?B",
+    "value_after": ">QQ??B",
+    "testnet_value_before": ">QQ?B",
+    "testnet_value_after": ">QQ??B",
+    "block_index": 3852387,
+    "testnet_block_index": 3285682
+  },
+  "issuance_subasset_serialization_length": {
+    "value_before": 18,
+    "value_after": 19,
+    "testnet_value_before": 18,
+    "testnet_value_after": 19,
+    "block_index": 3852387,
+    "testnet_block_index": 3285682
+  }
 }

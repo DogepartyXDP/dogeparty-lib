@@ -251,8 +251,8 @@ def validate (db, source, destination, asset, quantity, divisible, lock, callabl
     if total + quantity > config.MAX_INT:
         problems.append('total quantity overflow')
 
-    if destination and quantity:
-        problems.append('cannot issue and transfer simultaneously')
+    #if destination and quantity:
+    #    problems.append('cannot issue and transfer simultaneously')
 
     # For SQLite3
     if util.enabled('integer_overflow_fix', block_index=block_index) and (fee > config.MAX_INT or quantity > config.MAX_INT):

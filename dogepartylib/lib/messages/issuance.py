@@ -336,7 +336,7 @@ def parse (db, tx, message, message_type_id):
     asset_format = util.get_value_by_block_index("issuance_asset_serialization_format",tx['block_index'])
     asset_format_length = util.get_value_by_block_index("issuance_asset_serialization_length",tx['block_index'])
     subasset_format = util.get_value_by_block_index("issuance_subasset_serialization_format",tx['block_index'])
-	subasset_format_length = util.get_value_by_block_index("issuance_subasset_serialization_length",tx['block_index'])
+    subasset_format_length = util.get_value_by_block_index("issuance_subasset_serialization_length",tx['block_index'])
 
     # Unpack message.
     try:
@@ -347,11 +347,11 @@ def parse (db, tx, message, message_type_id):
                 raise exceptions.UnpackError
 
             # parse a subasset original issuance message
-			lock = None
+            lock = None
             if subasset_format_length <= 18:
-			    asset_id, quantity, divisible, compacted_subasset_length = struct.unpack(subasset_format, message[0:subasset_format_length])
-			else:
-                asset_id, quantity, divisible, lock, compacted_subasset_length = struct.unpack(subasset_format, message[0:subasset_format_length])			
+                asset_id, quantity, divisible, compacted_subasset_length = struct.unpack(subasset_format, message[0:subasset_format_length])
+            else:
+                asset_id, quantity, divisible, lock, compacted_subasset_length = struct.unpack(subasset_format, message[0:subasset_format_length])          
             description_length = len(message) - subasset_format_length - compacted_subasset_length
             if description_length < 0:
                 logger.warn("invalid subasset length: [issuance] tx [%s]: %s" % (tx['tx_hash'], compacted_subasset_length))
@@ -370,13 +370,13 @@ def parse (db, tx, message, message_type_id):
             else:
                 curr_format = asset_format + '{}s'.format(len(message) - asset_format_length)
             
-			lock = None
-			if (asset_format_length <= 26):#the lock param didn't even exist
-			    asset_id, quantity, divisible, callable_, call_date, call_price, description = struct.unpack(curr_format, message)
+            lock = None
+            if (asset_format_length <= 26):#the lock param didn't even exist
+                asset_id, quantity, divisible, callable_, call_date, call_price, description = struct.unpack(curr_format, message)
             else:
-			    asset_id, quantity, divisible, lock, callable_, call_date, call_price, description = struct.unpack(curr_format, message)
+                asset_id, quantity, divisible, lock, callable_, call_date, call_price, description = struct.unpack(curr_format, message)
             
-			call_price = round(call_price, 6) # TODO: arbitrary
+            call_price = round(call_price, 6) # TODO: arbitrary
             try:
                 description = description.decode('utf-8')
             except UnicodeDecodeError:
@@ -429,19 +429,19 @@ def parse (db, tx, message, message_type_id):
         util.debit(db, tx['source'], config.XDP, fee, action="issuance fee", event=tx['tx_hash'])
 
     # Lock?
-	if not isinstance(lock,bool):
-	    lock = False
+    if not isinstance(lock,bool):
+        lock = False
     if status == 'valid':
         if asset_format_length <= 26:
-			if description and description.lower() == 'lock':
-				lock = True
-				cursor = db.cursor()
-				issuances = list(cursor.execute('''SELECT * FROM issuances \
-												   WHERE (status = ? AND asset = ?)
-												   ORDER BY tx_index ASC''', ('valid', asset)))
-				cursor.close()
-				description = issuances[-1]['description']  # Use last description. (Assume previous issuance exists because tx is valid.)
-				timestamp, value_int, fee_fraction_int = None, None, None
+            if description and description.lower() == 'lock':
+                lock = True
+                cursor = db.cursor()
+                issuances = list(cursor.execute('''SELECT * FROM issuances \
+                                                   WHERE (status = ? AND asset = ?)
+                                                   ORDER BY tx_index ASC''', ('valid', asset)))
+                cursor.close()
+                description = issuances[-1]['description']  # Use last description. (Assume previous issuance exists because tx is valid.)
+                timestamp, value_int, fee_fraction_int = None, None, None
         #elif lock:
         #    cursor = db.cursor()
         #    issuances = list(cursor.execute('''SELECT * FROM issuances \

@@ -281,15 +281,23 @@ class AddrIndexRsThread (threading.Thread):
         self.is_killed = False
 
     def stop(self):
-        logging.debug('AddrIndexRs thread closing')
+        logging.info('AddrIndexRs thread closing')
         self.send({"kill": True})
 
     def connect(self):
-        logging.debug('AddrIndexRs connecting')
         self.lastId = 0
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.settimeout(SOCKET_TIMEOUT)
-        self.sock.connect((self.host, self.port))
+        while True:
+            logging.info('AddrIndexRs connecting...')
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.sock.settimeout(SOCKET_TIMEOUT)
+            try:
+                self.sock.connect((self.host, self.port))
+            except:
+                logging.info('Error connecting to AddrIndexRs! Retrying in a few seconds')
+                time.sleep(5.0)
+            else:
+                logging.info('Connected to AddrIndexRs!')
+                break
         
     def run(self):
         self.locker = threading.Condition()
@@ -308,11 +316,11 @@ class AddrIndexRsThread (threading.Thread):
                             self.sock.send(msg)
                             has_sent = True
                         except Exception as e:
-                            try:
-                                logging.debug('AddrIndexRs error:' + e)
-                                self.connect()
-                            except Exception as e2:
-                                logging.debug('AddrIndexRs fatal error:' + e2)
+                            #try:
+                            logging.debug('AddrIndexRs Send error:' + e)
+                            self.connect()
+                            #except Exception as e2:
+                            #    logging.debug('AddrIndexRs fatal error:' + e2)
 
                     self.message_to_send = None
                     data = b""
@@ -323,7 +331,17 @@ class AddrIndexRsThread (threading.Thread):
                             self.message_result = json.loads(data.decode('utf-8'))
                             retry_count = 0
                             parsed = True
+                        except socket.timeout:
+                            logging.debug('AddrIndexRs Recv timeout error sending: '+str(msg))
+                            if retry_count <= 0:
+                                self.connect()
+                            self.message_result = None
+                            retry_count -= -1
+                        except socket.error as e:
+                            logging.debug('AddrIndexRs Recv error:' + str(e)+' with msg '+str(msg))
+                            self.connect()
                         except Exception as e:
+                            logging.debug('AddrIndexRs Recv error:' + str(e)+' with msg '+str(msg))
                             if retry_count <= 0:
                                 raise e
                             self.message_result = None
@@ -333,7 +351,7 @@ class AddrIndexRsThread (threading.Thread):
             else:
                 self.locker.notify()
         self.sock.close()
-        logging.debug('AddrIndexRs socket closed normally')
+        logging.info('AddrIndexRs socket closed normally')
 
     def send(self, msg):
         self.locker.acquire()

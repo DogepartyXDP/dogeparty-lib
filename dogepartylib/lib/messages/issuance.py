@@ -448,9 +448,9 @@ def parse (db, tx, message, message_type_id):
                                                WHERE (status = ? AND asset = ?)
                                                ORDER BY tx_index ASC''', ('valid', asset)))
             cursor.close()
-            
-			if len(issuances) > 0:
-			    description = issuances[-1]['description']  # Use last description
+
+            if len(issuances) > 0:
+                description = issuances[-1]['description']  # Use last description
 
         if not reissuance:
             # Add to table of assets.

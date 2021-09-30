@@ -442,14 +442,15 @@ def parse (db, tx, message, message_type_id):
                 cursor.close()
                 description = issuances[-1]['description']  # Use last description. (Assume previous issuance exists because tx is valid.)
                 timestamp, value_int, fee_fraction_int = None, None, None
-        #elif lock:
-        #    cursor = db.cursor()
-        #    issuances = list(cursor.execute('''SELECT * FROM issuances \
-        #                                       WHERE (status = ? AND asset = ?)
-        #                                       ORDER BY tx_index ASC''', ('valid', asset)))
-        #    cursor.close()
-        #    description = issuances[-1]['description']  # Use last description. (Assume previous issuance exists because tx is valid.)
-        #    timestamp, value_int, fee_fraction_int = None, None, None
+        elif lock:
+            cursor = db.cursor()
+            issuances = list(cursor.execute('''SELECT * FROM issuances \
+                                               WHERE (status = ? AND asset = ?)
+                                               ORDER BY tx_index ASC''', ('valid', asset)))
+            cursor.close()
+            
+			if len(issuances) > 0:
+			    description = issuances[-1]['description']  # Use last description
 
         if not reissuance:
             # Add to table of assets.

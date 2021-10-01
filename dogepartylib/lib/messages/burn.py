@@ -74,46 +74,46 @@ def parse (db, tx, MAINNET_BURNS, message=None):
     burn_parse_cursor = db.cursor()
 
     #if config.TESTNET or config.REGTEST:
-	problems = []
-	status = 'valid'
+    problems = []
+    status = 'valid'
 
-	if status == 'valid':
-		problems = validate(db, tx['source'], tx['destination'], tx['doge_amount'], tx['block_index'], overburn=False)
-		if problems: status = 'invalid: ' + '; '.join(problems)
+    if status == 'valid':
+        problems = validate(db, tx['source'], tx['destination'], tx['doge_amount'], tx['block_index'], overburn=False)
+        if problems: status = 'invalid: ' + '; '.join(problems)
 
-		if tx['doge_amount'] != None:
-			sent = tx['doge_amount']
-		else:
-			sent = 0
+        if tx['doge_amount'] != None:
+            sent = tx['doge_amount']
+        else:
+            sent = 0
 
-	if status == 'valid':
-		# Calculate quantity of XDP earned. (Maximum 1 DOGE in total, ever.)
-		cursor = db.cursor()
-		cursor.execute('''SELECT * FROM burns WHERE (status = ? AND source = ?)''', ('valid', tx['source']))
-		burns = cursor.fetchall()
-		already_burned = sum([burn['burned'] for burn in burns])
-		ONE = 1000000 * config.UNIT
-		max_burn = ONE - already_burned
-		if sent > max_burn: burned = max_burn   # Exceeded maximum burn; earn what you can.
-		else: burned = sent
+    if status == 'valid':
+        # Calculate quantity of XDP earned. (Maximum 1 DOGE in total, ever.)
+        cursor = db.cursor()
+        cursor.execute('''SELECT * FROM burns WHERE (status = ? AND source = ?)''', ('valid', tx['source']))
+        burns = cursor.fetchall()
+        already_burned = sum([burn['burned'] for burn in burns])
+        ONE = 1000000 * config.UNIT
+        max_burn = ONE - already_burned
+        if sent > max_burn: burned = max_burn   # Exceeded maximum burn; earn what you can.
+        else: burned = sent
 
-		total_time = config.BURN_END - config.BURN_START
-		partial_time = config.BURN_END - tx['block_index']
-		#multiplier = (1000 + (500 * Fraction(partial_time, total_time)))
-		multiplier = 0.1 + (0.05 * Fraction(partial_time, total_time))
-		
-		earned = round(burned * multiplier)
+        total_time = config.BURN_END - config.BURN_START
+        partial_time = config.BURN_END - tx['block_index']
+        #multiplier = (1000 + (500 * Fraction(partial_time, total_time)))
+        multiplier = 0.1 + (0.05 * Fraction(partial_time, total_time))
+        
+        earned = round(burned * multiplier)
 
-		# Credit source address with earned XDP.
-		util.credit(db, tx['source'], config.XDP, earned, action='burn', event=tx['tx_hash'])
-	else:
-		burned = 0
-		earned = 0
+        # Credit source address with earned XDP.
+        util.credit(db, tx['source'], config.XDP, earned, action='burn', event=tx['tx_hash'])
+    else:
+        burned = 0
+        earned = 0
 
-	tx_index = tx['tx_index']
-	tx_hash = tx['tx_hash']
-	block_index = tx['block_index']
-	source = tx['source']
+    tx_index = tx['tx_index']
+    tx_hash = tx['tx_hash']
+    block_index = tx['block_index']
+    source = tx['source']
 
     #else:
         # Mainnet burns are hard‐coded.

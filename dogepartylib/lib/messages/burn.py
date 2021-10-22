@@ -105,7 +105,11 @@ def parse (db, tx, MAINNET_BURNS, message=None):
         earned = round(burned * multiplier)
 
         # Credit source address with earned XDP.
-        util.credit(db, tx['source'], config.XDP, earned, action='burn', event=tx['tx_hash'])
+        if earned >= 0:
+            util.credit(db, tx['source'], config.XDP, earned, action='burn', event=tx['tx_hash'])           
+        else:
+            burned = 0
+            earned = 0
     else:
         burned = 0
         earned = 0

@@ -31,8 +31,8 @@ RUN python3 setup.py install_apsw
 # branch (as you should check out the same branch as what you have with dogeparty-lib, or a compatible one)
 ARG CLI_BRANCH=master
 ENV CLI_BRANCH ${CLI_BRANCH}
-#RUN git clone -b ${CLI_BRANCH} https://github.com/DogepartyXDP/dogeparty-cli.git /dogeparty-cli
-RUN git clone -b ${CLI_BRANCH} git@github.com:DogepartyXDP/dogeparty-cli.git /dogeparty-cli
+RUN git clone -b ${CLI_BRANCH} https://github.com/DogepartyXDP/dogeparty-cli.git /dogeparty-cli
+#RUN git clone -b ${CLI_BRANCH} git@github.com:DogepartyXDP/dogeparty-cli.git /dogeparty-cli
 WORKDIR /dogeparty-cli
 RUN pip3 install -r requirements.txt
 RUN python3 setup.py develop

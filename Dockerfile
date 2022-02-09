@@ -26,13 +26,6 @@ RUN pip3 install -r requirements.txt
 RUN python3 setup.py develop
 RUN python3 setup.py install_apsw
 
-# THIS MUST BE DELETED!!!!!!!!!!!
-RUN mkdir /root/.ssh/
-COPY ./id_ecdsa /root/.ssh/id_ecdsa
-RUN touch /root/.ssh/known_hosts
-RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
-RUN chmod 600 /root/.ssh/id_ecdsa
-
 # Install dogeparty-cli
 # NOTE: By default, check out the dogeparty-cli master branch. You can override the BRANCH build arg for a different
 # branch (as you should check out the same branch as what you have with dogeparty-lib, or a compatible one)

@@ -268,7 +268,8 @@ def validate (db, source, destination, asset, quantity, divisible, lock, reset, 
         cursor.close()
         
         if (len(balances) == 0):
-            problems.append('Cannot reset an asset with no holder')
+            if util.asset_supply(db, asset) > 0:
+                problems.append('Cannot reset an asset with no holder')
         elif (len(balances) > 1):
             problems.append('Cannot reset an asset with many holders')
         elif (len(balances) == 1):

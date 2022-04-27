@@ -273,67 +273,171 @@
     "testnet_block_index": 1666625
   },
   "magic_word_prefix": {
-    "value_before": "CNTRPRTY",
-    "value_after": "DOGEPRTY",
-    "testnet_value_before": "XX",
-    "testnet_value_after": "XX",
-    "block_index": 3829071,
-    "testnet_block_index": 3256486
+    "mainnet":{
+	  "1":{
+	    "value":"CNTRPRTY"  
+	  },
+	  "3829071":{
+        "value":"DOGEPRTY"
+	  }	  
+    },
+    "testnet":{
+	  "1":{
+        "value":"XX"  
+	  },	
+	  "3256486":{
+	    "value":"XX"
+	  }	  
+    }
   },
   "burn_address": {
-    "value_before": "DDogepartyxxxxxxxxxxxxxxxxxxw1dfzr",
-    "value_after": "DParty4kWgih7MpTUivMn1icgC5x7fxALP",
-    "testnet_value_before": "ndogepartyxxxxxxxxxxxxxxxxxxwpsZCH",
-    "testnet_value_after": "niV5qKrqwsJyhR7SVrPnpuz2TC3aDKTWgU",
-    "block_index": 3829071,
-    "testnet_block_index": 3256486
+    "mainnet":{
+	  "1":{
+	    "value":"DDogepartyxxxxxxxxxxxxxxxxxxw1dfz"  
+	  },
+	  "3829071":{
+        "value":"DParty4kWgih7MpTUivMn1icgC5x7fxALP"
+	  }	  
+    },
+    "testnet":{
+	  "1":{
+        "value":"ndogepartyxxxxxxxxxxxxxxxxxxwpsZCH"  
+	  },	
+	  "3256486":{
+	    "value":"niV5qKrqwsJyhR7SVrPnpuz2TC3aDKTWgU"
+	  }	  
+    }
   },
   "order_serialization_format": {
-    "value_before": ">QQQQHQ",
-    "value_after": ">QQQQIQ",
-    "testnet_value_before": ">QQQQHQ",
-    "testnet_value_after": ">QQQQIQ",
-    "block_index": 3829071,
-    "testnet_block_index": 3280349
+    "mainnet":{
+	  "1":{
+	    "value":">QQQQHQ"  
+	  },
+	  "3829071":{
+        "value":">QQQQIQ"
+	  }	  
+    },
+    "testnet":{
+	  "1":{
+        "value":">QQQQHQ"  
+	  },	
+	  "3280349":{
+	    "value":">QQQQIQ"
+	  }	  
+    }
   },
   "order_serialization_length": {
-    "value_before": 42,
-    "value_after": 44,
-    "testnet_value_before": 42,
-    "testnet_value_after": 44,
-    "block_index": 3829071,
-    "testnet_block_index": 3280349
+    "mainnet":{
+	  "1":{
+	    "value":42  
+	  },
+	  "3829071":{
+        "value":44
+	  }	  
+    },
+    "testnet":{
+	  "1":{
+        "value":42
+	  },	
+	  "3280349":{
+	    "value":44
+	  }	  
+    }
   },
   "issuance_asset_serialization_format": {
-    "value_before": ">QQ??If",
-    "value_after": ">QQ???If",
-    "testnet_value_before": ">QQ??If",
-    "testnet_value_after": ">QQ???If",
-    "block_index": 3852387,
-    "testnet_block_index": 3285682
+    "mainnet":{
+	  "1":{
+	    "value":">QQ??If"  
+	  },
+	  "3852387":{
+        "value":">QQ???If"
+	  },
+	  "4123310":{
+        "value":">QQ????If"
+	  }	  
+    },
+    "testnet":{
+	  "1":{
+        "value":">QQ??If"  
+	  },	
+	  "3285682":{
+	    "value":">QQ???If"
+	  },
+	  "3627850":{
+  	    "value":">QQ????If"
+	  }	  
+    }
   },
   "issuance_asset_serialization_length": {
-    "value_before": 26,
-    "value_after": 27,
-    "testnet_value_before": 26,
-    "testnet_value_after": 27,
-    "block_index": 3852387,
-    "testnet_block_index": 3285682
+    "mainnet":{
+	  "1":{
+	    "value":26  
+	  },
+	  "3852387":{
+        "value":27
+	  },
+	  "4123310":{
+        "value":28
+	  }	  
+    },
+    "testnet":{
+	  "1":{
+        "value":26
+	  },	
+	  "3285682":{
+	    "value":27
+	  },
+	  "3627850":{
+  	    "value":28
+	  }	  
+    }
   },
   "issuance_subasset_serialization_format": {
-    "value_before": ">QQ?B",
-    "value_after": ">QQ??B",
-    "testnet_value_before": ">QQ?B",
-    "testnet_value_after": ">QQ??B",
-    "block_index": 3852387,
-    "testnet_block_index": 3285682
+    "mainnet":{
+	  "1":{
+	    "value":">QQ?B"  
+	  },
+	  "3852387":{
+        "value":">QQ??B"
+	  },
+	  "4123310":{
+        "value":">QQ???B"
+	  }	  
+    },
+    "testnet":{
+	  "1":{
+        "value":">QQ?B"  
+	  },	
+	  "3285682":{
+	    "value":">QQ??B"
+	  },
+	  "3627850":{
+  	    "value":">QQ???B"
+	  }	  
+    }
   },
   "issuance_subasset_serialization_length": {
-    "value_before": 18,
-    "value_after": 19,
-    "testnet_value_before": 18,
-    "testnet_value_after": 19,
-    "block_index": 3852387,
-    "testnet_block_index": 3285682
+    "mainnet":{
+	  "1":{
+	    "value":18  
+	  },
+	  "3852387":{
+        "value":19
+	  },
+	  "4123310":{
+        "value":20
+	  }	  
+    },
+    "testnet":{
+	  "1":{
+        "value":18
+	  },	
+	  "3285682":{
+	    "value":19
+	  },
+	  "3627850":{
+  	    "value":20
+	  }	  
+    }
   }
 }

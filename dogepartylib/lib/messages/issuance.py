@@ -115,6 +115,8 @@ def validate (db, source, destination, asset, quantity, divisible, lock, reset, 
     if call_price is None: call_price = 0.0
     if description is None: description = ""
     if divisible is None: divisible = True
+    if lock is None: lock = False
+    if reset is None: reset = False
 
     if isinstance(call_price, int): call_price = float(call_price)
     #^ helps especially with calls from JS‐based clients, where parseFloat(15) returns 15 (not 15.0), which json takes as an int
@@ -393,6 +395,9 @@ def parse (db, tx, message, message_type_id):
             except UnicodeDecodeError:
                 description = ''
         elif (tx['block_index'] > 283271 or config.TESTNET or config.REGTEST) and len(message) >= asset_format_length: # Protocol change.
+            if len(message) - asset_format_length == 0:
+                message = message + b'\x00' #If the message length is 0, then the description will be interpreted as a blank string
+        
             if len(message) - asset_format_length <= 42:
                 curr_format = asset_format + '{}p'.format(len(message) - asset_format_length)
             else:

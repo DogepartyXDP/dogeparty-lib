@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 from logging import handlers as logging_handlers
 D = decimal.Decimal
 import binascii
+import math
 
 import struct
 import apsw
@@ -63,7 +64,7 @@ API_TABLES = ['assets', 'balances', 'credits', 'debits', 'bets', 'bet_matches',
               'bet_expirations', 'order_expirations', 'bet_match_expirations',
               'order_match_expirations', 'bet_match_resolutions', 'rps',
               'rpsresolves', 'rps_matches', 'rps_expirations', 'rps_match_expirations',
-              'mempool', 'sweeps', 'dispensers', 'dispenses']
+              'mempool', 'sweeps', 'dispensers', 'dispenses', 'transactions']
 
 API_TRANSACTIONS = ['bet', 'broadcast', 'dogepay', 'burn', 'cancel', 'destroy',
                     'dividend', 'issuance', 'order', 'send',
@@ -125,7 +126,8 @@ def db_query(db, statement, bindings=(), callback=None, **callback_args):
     # Sanitize.
     forbidden_words = ['pragma', 'attach', 'database', 'begin', 'transaction']
     for word in forbidden_words:
-        if word in statement.lower() or any([word in str(binding).lower() for binding in bindings]):
+        #This will find if the forbidden word is in the statement as a whole word. For example, "transactions" will be allowed because the "s" at the end
+        if re.search(r"\b"+word+"\b", statement.lower()):
             raise APIError("Forbidden word in query: '{}'.".format(word))
 
     if hasattr(callback, '__call__'):
@@ -279,11 +281,44 @@ def get_rows(db, table, filters=None, filterop='AND', order_by=None, order_dir=N
 
     query_result = db_query(db, statement, tuple(bindings))
 
+    if table == 'balances':
+        return adjust_get_balances_results(query_result, db)
+
+    if table == 'destructions':
+        return adjust_get_destructions_results(query_result)
+        
     if table == 'sends':
         # for sends, handle the memo field properly
         return adjust_get_sends_results(query_result)
 
+    if table == 'transactions':
+        # for transactions, handle the data field properly
+        return adjust_get_transactions_results(query_result)    
+
     return query_result
+
+def adjust_get_balances_results(query_result, db):
+    filtered_results = []
+    assets = {}
+    for balances_row in list(query_result):
+        asset = balances_row['asset']
+        if not asset in assets:
+            assets[asset] = util.is_divisible(db, asset)
+
+        balances_row['divisible'] = assets[asset]
+        filtered_results.append(balances_row)
+
+    return filtered_results
+
+def adjust_get_destructions_results(query_result):
+    filtered_results = []
+    for destruction_row in list(query_result):
+        if type(destruction_row['tag']) == bytes:
+            destruction_row['tag'] = destruction_row['tag'].decode('utf-8', 'ignore')
+
+        filtered_results.append(destruction_row)
+
+    return filtered_results
 
 def adjust_get_sends_memo_filters(filters):
     """Convert memo to a byte string.  If memo_hex is supplied, attempt to decode it and use that instead."""
@@ -317,6 +352,13 @@ def adjust_get_sends_results(query_result):
         filtered_results.append(send_row)
     return filtered_results
 
+def adjust_get_transactions_results(query_result):
+    """Format the data field.  Try and decode the data from a utf-8 uncoded string. Invalid utf-8 strings return an empty data."""
+    filtered_results = []
+    for transaction_row in list(query_result):
+        transaction_row['data'] = transaction_row['data'].hex()
+        filtered_results.append(transaction_row)
+    return filtered_results
 
 def compose_transaction(db, name, params,
                         encoding='auto',
@@ -857,6 +899,59 @@ class APIServer(threading.Thread):
         # TODO: Rename this method.
         def search_pubkey(pubkeyhash, provided_pubkeys=None):
             return backend.pubkeyhash_to_pubkey(pubkeyhash, provided_pubkeys=provided_pubkeys)
+
+        @dispatcher.add_method
+        def get_dispenser_info(tx_hash=None, tx_index=None):
+            cursor = self.db.cursor()
+            
+            if tx_hash is None and tx_index is None:
+                raise APIError("You must provided a tx hash or a tx index")
+            
+            if tx_hash is not None:
+                cursor.execute('SELECT d.*, a.asset_longname FROM dispensers d LEFT JOIN assets a ON a.asset_name = d.asset WHERE tx_hash=:tx_hash', {"tx_hash":tx_hash})
+            else:
+                cursor.execute('SELECT d.*, a.asset_longname FROM dispensers d LEFT JOIN assets a ON a.asset_name = d.asset WHERE tx_index=:tx_index', {"tx_index":tx_index})
+            
+            dispensers = cursor.fetchall()
+            
+            if len(dispensers) == 1:
+                dispenser = dispensers[0]
+                oracle_price = ""
+                satoshi_price = ""
+                fiat_price = ""
+                oracle_price_last_updated = ""
+                oracle_fiat_label = ""
+                
+                if dispenser["oracle_address"] != None:
+                    fiat_price = util.satoshirate_to_fiat(dispenser["satoshirate"])
+                    oracle_price, oracle_fee, oracle_fiat_label, oracle_price_last_updated = util.get_last_oracle_info(self.db, dispenser.oracle_address, bindings['block_index'])
+                    
+                    if (oracle_price > 0):
+                        satoshi_price = math.ceil((fiat_price/oracle_price) * config.UNIT)
+                    else:
+                        raise APIError("Last oracle price is zero")
+                
+                return {
+                    "tx_index": dispenser["tx_index"],
+                    "tx_hash": dispenser["tx_hash"],
+                    "block_index": dispenser["block_index"],
+                    "source": dispenser["source"],
+                    "asset": dispenser["asset"],
+                    "give_quantity": dispenser["give_quantity"],
+                    "escrow_quantity": dispenser["escrow_quantity"],
+                    "mainchainrate": dispenser["satoshirate"],
+                    "fiat_price": fiat_price,
+                    "fiat_unit": oracle_fiat_label,
+                    "oracle_price": oracle_price,
+                    "satoshi_price": satoshi_price,
+                    "status": dispenser["status"],
+                    "give_remaining": dispenser["give_remaining"],
+                    "oracle_address": dispenser["oracle_address"],
+                    "oracle_price_last_updated": oracle_price_last_updated,
+                    "asset_longname": dispenser["asset_longname"]
+                }
+            
+            return {}
 
         def _set_cors_headers(response):
             if not config.RPC_NO_ALLOW_CORS:

@@ -199,7 +199,7 @@ def construct_coin_selection(encoding, data_array, source, allow_unconfirmed_inp
         else:
             necessary_fee = int(size / 1024 * fee_per_kb)
             #final_fee = max(fee_provided, necessary_fee)
-            final_fee = fee_round_up(necessary_fee,-8)
+            final_fee = fee_round_up(necessary_fee,-6)
             logger.getChild('p2shdebug').debug('final_fee inputs: %d size: %d final_fee %s' % (len(inputs), size, final_fee))
 
         # Check if good.

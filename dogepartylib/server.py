@@ -80,7 +80,7 @@ def get_lock():
 
 def initialise(*args, **kwargs):
     initialise_config(*args, **kwargs)
-    return initialise_db(kwargs['checkdb'] if ('checkdb' in kwargs) else False)
+    return initialise_db()
 
 def initialise_config(database_file=None, log_file=None, api_log_file=None,
                 testnet=False, testcoin=False, regtest=False,

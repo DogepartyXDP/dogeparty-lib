@@ -46,4 +46,4 @@ WORKDIR /
 EXPOSE 4005 14005
 
 # NOTE: Defaults to running on mainnet, specify -e TESTNET=1 to start up on testnet
-ENTRYPOINT start.sh ${BTC_NETWORK} ${NO_BOOTSTRAP}
+ENTRYPOINT start.sh ${DOGE_NETWORK} ${NO_BOOTSTRAP}

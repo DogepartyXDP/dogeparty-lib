@@ -594,7 +594,7 @@ def get_tx_info1(tx_hex, block_index, block_parser=None):
     """
     ctx = backend.deserialize(tx_hex)
 
-    magic_word_prefix = util.get_value_by_block_index("magic_word_prefix", block_index)
+    magic_word_prefix = bytes(util.get_value_by_block_index("magic_word_prefix", block_index),"utf-8")
 
     def get_pubkeyhash(scriptpubkey):
         asm = script.get_asm(scriptpubkey) 

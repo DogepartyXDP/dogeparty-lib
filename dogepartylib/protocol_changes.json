@@ -274,170 +274,260 @@
   },
   "magic_word_prefix": {
     "mainnet":{
-	  "1":{
-	    "value":"CNTRPRTY"  
-	  },
-	  "3829071":{
+      "1":{
+        "value":"CNTRPRTY"  
+      },
+      "3829071":{
         "value":"DOGEPRTY"
-	  }	  
+      }   
     },
     "testnet":{
-	  "1":{
+      "1":{
         "value":"XX"  
-	  },	
-	  "3256486":{
-	    "value":"XX"
-	  }	  
+      },    
+      "3256486":{
+        "value":"XX"
+      }   
     }
   },
   "burn_address": {
     "mainnet":{
-	  "1":{
-	    "value":"DDogepartyxxxxxxxxxxxxxxxxxxw1dfz"  
-	  },
-	  "3829071":{
+      "1":{
+        "value":"DDogepartyxxxxxxxxxxxxxxxxxxw1dfzr"  
+      },
+      "3829071":{
         "value":"DParty4kWgih7MpTUivMn1icgC5x7fxALP"
-	  }	  
+      }   
     },
     "testnet":{
-	  "1":{
+      "1":{
         "value":"ndogepartyxxxxxxxxxxxxxxxxxxwpsZCH"  
-	  },	
-	  "3256486":{
-	    "value":"niV5qKrqwsJyhR7SVrPnpuz2TC3aDKTWgU"
-	  }	  
+      },    
+      "3256486":{
+        "value":"niV5qKrqwsJyhR7SVrPnpuz2TC3aDKTWgU"
+      }   
     }
   },
-  "order_serialization_format": {
+  "burn_start": {
     "mainnet":{
-	  "1":{
-	    "value":">QQQQHQ"  
-	  },
-	  "3829071":{
-        "value":">QQQQIQ"
-	  }	  
+      "1":{
+        "value":335642
+      },
+      "3919346":{
+        "value":3919346
+      }   
     },
     "testnet":{
-	  "1":{
+      "1":{
+        "value":166371  
+      },    
+      "3256485":{
+        "value":3256485
+      }   
+    }
+  },
+  "burn_end": {
+    "mainnet":{
+      "1":{
+        "value":378842  
+      },
+      "3919346":{
+        "value":4007186
+      }   
+    },
+    "testnet":{
+      "1":{
+        "value":260418
+      },    
+      "3256485":{
+        "value":4121256
+      }   
+    }
+  },
+  "burn_multiplier_constant": {
+    "mainnet":{
+      "1":{
+        "value":0.001
+      },
+      "3919346":{
+        "value":0.1
+      }   
+    },
+    "testnet":{
+      "1":{
+        "value":1  
+      },    
+      "3256485":{
+        "value":0.1
+      }   
+    }
+  },
+  "burn_multiplier_product": {
+    "mainnet":{
+      "1":{
+        "value":0.0005  
+      },
+      "3919346":{
+        "value":0.05
+      }   
+    },
+    "testnet":{
+      "1":{
+        "value":0.5
+      },    
+      "3256485":{
+        "value":0.05
+      }   
+    }
+  },
+  "burn_limit": {
+    "mainnet":{
+      "1":{
+        "value":20000000
+      },
+      "3829071":{
+        "value":1000000
+      }   
+    },
+    "testnet":{
+      "1":{
+        "value":5000000
+      },    
+      "3256486":{
+        "value":1000000
+      }   
+    }
+  },  
+  "order_serialization_format": {
+    "mainnet":{
+      "1":{
         "value":">QQQQHQ"  
-	  },	
-	  "3280349":{
-	    "value":">QQQQIQ"
-	  }	  
+      },
+      "3829071":{
+        "value":">QQQQIQ"
+      }   
+    },
+    "testnet":{
+      "1":{
+        "value":">QQQQHQ"  
+      },    
+      "3280349":{
+        "value":">QQQQIQ"
+      }   
     }
   },
   "order_serialization_length": {
     "mainnet":{
-	  "1":{
-	    "value":42  
-	  },
-	  "3829071":{
+      "1":{
+        "value":42  
+      },
+      "3829071":{
         "value":44
-	  }	  
+      }   
     },
     "testnet":{
-	  "1":{
+      "1":{
         "value":42
-	  },	
-	  "3280349":{
-	    "value":44
-	  }	  
+      },    
+      "3280349":{
+        "value":44
+      }   
     }
   },
   "issuance_asset_serialization_format": {
     "mainnet":{
-	  "1":{
-	    "value":">QQ??If"  
-	  },
-	  "3852387":{
+      "1":{
+        "value":">QQ??If"  
+      },
+      "3852387":{
         "value":">QQ???If"
-	  },
-	  "4123310":{
+      },
+      "4123310":{
         "value":">QQ????If"
-	  }	  
+      }   
     },
     "testnet":{
-	  "1":{
+      "1":{
         "value":">QQ??If"  
-	  },	
-	  "3285682":{
-	    "value":">QQ???If"
-	  },
-	  "3627850":{
-  	    "value":">QQ????If"
-	  }	  
+      },    
+      "3285682":{
+        "value":">QQ???If"
+      },
+      "3627850":{
+        "value":">QQ????If"
+      }   
     }
   },
   "issuance_asset_serialization_length": {
     "mainnet":{
-	  "1":{
-	    "value":26  
-	  },
-	  "3852387":{
+      "1":{
+        "value":26  
+      },
+      "3852387":{
         "value":27
-	  },
-	  "4123310":{
+      },
+      "4123310":{
         "value":28
-	  }	  
+      }   
     },
     "testnet":{
-	  "1":{
+      "1":{
         "value":26
-	  },	
-	  "3285682":{
-	    "value":27
-	  },
-	  "3627850":{
-  	    "value":28
-	  }	  
+      },    
+      "3285682":{
+        "value":27
+      },
+      "3627850":{
+        "value":28
+      }   
     }
   },
   "issuance_subasset_serialization_format": {
     "mainnet":{
-	  "1":{
-	    "value":">QQ?B"  
-	  },
-	  "3852387":{
+      "1":{
+        "value":">QQ?B"  
+      },
+      "3852387":{
         "value":">QQ??B"
-	  },
-	  "4123310":{
+      },
+      "4123310":{
         "value":">QQ???B"
-	  }	  
+      }   
     },
     "testnet":{
-	  "1":{
+      "1":{
         "value":">QQ?B"  
-	  },	
-	  "3285682":{
-	    "value":">QQ??B"
-	  },
-	  "3627850":{
-  	    "value":">QQ???B"
-	  }	  
+      },    
+      "3285682":{
+        "value":">QQ??B"
+      },
+      "3627850":{
+        "value":">QQ???B"
+      }   
     }
   },
   "issuance_subasset_serialization_length": {
     "mainnet":{
-	  "1":{
-	    "value":18  
-	  },
-	  "3852387":{
+      "1":{
+        "value":18  
+      },
+      "3852387":{
         "value":19
-	  },
-	  "4123310":{
+      },
+      "4123310":{
         "value":20
-	  }	  
+      }   
     },
     "testnet":{
-	  "1":{
+      "1":{
         "value":18
-	  },	
-	  "3285682":{
-	    "value":19
-	  },
-	  "3627850":{
-  	    "value":20
-	  }	  
+      },    
+      "3285682":{
+        "value":19
+      },
+      "3627850":{
+        "value":20
+      }   
     }
   }
 }

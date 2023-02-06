@@ -338,7 +338,7 @@ def initialise(db):
                       address_asset_idx ON balances (address, asset)
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      address_idx ON balances (address)
+                      balances_address_idx ON balances (address)
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
                       asset_idx ON balances (asset)

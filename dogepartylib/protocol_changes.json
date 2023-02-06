@@ -538,21 +538,28 @@
       "testnet_block_index": 3365000
   },
   "order_match_expire_time":{
-	"mainnet":{
-	  "1":{
+    "mainnet":{
+      "1":{
         "value":20  
       },
       "3847700":{
         "value":120
       }
-	},
-	"testnet":{
-	  "1":{
+    },
+    "testnet":{
+      "1":{
         "value":20  
       },
       "3256485":{
         "value":120
       }
-	}
+    }
+  },
+  "ledger_hash_ordered":{
+    "minimum_version_major": 9,
+    "minimum_version_minor": 59,
+    "minimum_version_revision": 3,
+    "block_index": 3847979,
+    "testnet_block_index": 4236278
   }
 }

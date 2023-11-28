@@ -356,7 +356,7 @@ def dispense(db, tx):
         satoshirate = dispenser['satoshirate']
         give_quantity = dispenser['give_quantity']
 
-        if satoshirate > 0 and give_quantity > 0::
+        if satoshirate > 0 and give_quantity > 0:
             if (dispenser['oracle_address'] != None) and util.enabled('oracle_dispensers', tx['block_index']):
                 last_price, last_fee, last_fiat_label, last_updated = util.get_oracle_last_price(db, dispenser['oracle_address'], tx['block_index'])
                 fiatrate = util.satoshirate_to_fiat(satoshirate)

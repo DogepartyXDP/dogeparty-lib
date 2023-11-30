@@ -274,38 +274,38 @@
   },
   "magic_word_prefix": {
     "mainnet":{
-	  "1":{
-	    "value":"CNTRPRTY"  
-	  },
-	  "3829071":{
+      "1":{
+        "value":"CNTRPRTY"  
+      },
+      "3829071":{
         "value":"DOGEPRTY"
-	  }	  
+      }   
     },
     "testnet":{
-	  "1":{
+      "1":{
         "value":"XX"  
-	  },	
-	  "3256486":{
-	    "value":"XX"
-	  }	  
+      },    
+      "3256486":{
+        "value":"XX"
+      }   
     }
   },
   "burn_address": {
     "mainnet":{
-	  "1":{
-	    "value":"DDogepartyxxxxxxxxxxxxxxxxxxw1dfz"  
-	  },
-	  "3829071":{
+      "1":{
+        "value":"DDogepartyxxxxxxxxxxxxxxxxxxw1dfz"  
+      },
+      "3829071":{
         "value":"DParty4kWgih7MpTUivMn1icgC5x7fxALP"
-	  }	  
+      }   
     },
     "testnet":{
-	  "1":{
+      "1":{
         "value":"ndogepartyxxxxxxxxxxxxxxxxxxwpsZCH"  
-	  },	
-	  "3256486":{
-	    "value":"niV5qKrqwsJyhR7SVrPnpuz2TC3aDKTWgU"
-	  }	  
+      },    
+      "3256486":{
+        "value":"niV5qKrqwsJyhR7SVrPnpuz2TC3aDKTWgU"
+      }   
     }
   },
   "oracle_dispensers": {
@@ -317,137 +317,144 @@
   },
   "order_serialization_format": {
     "mainnet":{
-	  "1":{
-	    "value":">QQQQHQ"  
-	  },
-	  "3829071":{
+      "1":{
+        "value":">QQQQHQ"  
+      },
+      "3829071":{
         "value":">QQQQIQ"
-	  }	  
+      }   
     },
     "testnet":{
-	  "1":{
+      "1":{
         "value":">QQQQHQ"  
-	  },	
-	  "3280349":{
-	    "value":">QQQQIQ"
-	  }	  
+      },    
+      "3280349":{
+        "value":">QQQQIQ"
+      }   
     }
   },
   "order_serialization_length": {
     "mainnet":{
-	  "1":{
-	    "value":42  
-	  },
-	  "3829071":{
+      "1":{
+        "value":42  
+      },
+      "3829071":{
         "value":44
-	  }	  
+      }   
     },
     "testnet":{
-	  "1":{
+      "1":{
         "value":42
-	  },	
-	  "3280349":{
-	    "value":44
-	  }	  
+      },    
+      "3280349":{
+        "value":44
+      }   
     }
   },
   "issuance_asset_serialization_format": {
     "mainnet":{
-	  "1":{
-	    "value":">QQ??If"  
-	  },
-	  "3852387":{
+      "1":{
+        "value":">QQ??If"  
+      },
+      "3852387":{
         "value":">QQ???If"
-	  },
-	  "4123310":{
+      },
+      "4123310":{
         "value":">QQ????If"
-	  }	  
+      }   
     },
     "testnet":{
-	  "1":{
+      "1":{
         "value":">QQ??If"  
-	  },	
-	  "3285682":{
-	    "value":">QQ???If"
-	  },
-	  "3627850":{
-  	    "value":">QQ????If"
-	  }	  
+      },    
+      "3285682":{
+        "value":">QQ???If"
+      },
+      "3627850":{
+        "value":">QQ????If"
+      }   
     }
   },
   "issuance_asset_serialization_length": {
     "mainnet":{
-	  "1":{
-	    "value":26  
-	  },
-	  "3852387":{
+      "1":{
+        "value":26  
+      },
+      "3852387":{
         "value":27
-	  },
-	  "4123310":{
+      },
+      "4123310":{
         "value":28
-	  }	  
+      }   
     },
     "testnet":{
-	  "1":{
+      "1":{
         "value":26
-	  },	
-	  "3285682":{
-	    "value":27
-	  },
-	  "3627850":{
-  	    "value":28
-	  }	  
+      },    
+      "3285682":{
+        "value":27
+      },
+      "3627850":{
+        "value":28
+      }   
     }
   },
   "issuance_subasset_serialization_format": {
     "mainnet":{
-	  "1":{
-	    "value":">QQ?B"  
-	  },
-	  "3852387":{
+      "1":{
+        "value":">QQ?B"  
+      },
+      "3852387":{
         "value":">QQ??B"
-	  },
-	  "4123310":{
+      },
+      "4123310":{
         "value":">QQ???B"
-	  }	  
+      }   
     },
     "testnet":{
-	  "1":{
+      "1":{
         "value":">QQ?B"  
-	  },	
-	  "3285682":{
-	    "value":">QQ??B"
-	  },
-	  "3627850":{
-  	    "value":">QQ???B"
-	  }	  
+      },    
+      "3285682":{
+        "value":">QQ??B"
+      },
+      "3627850":{
+        "value":">QQ???B"
+      }   
     }
   },
   "issuance_subasset_serialization_length": {
     "mainnet":{
-	  "1":{
-	    "value":18  
-	  },
-	  "3852387":{
+      "1":{
+        "value":18  
+      },
+      "3852387":{
         "value":19
-	  },
-	  "4123310":{
+      },
+      "4123310":{
         "value":20
-	  }	  
+      }   
     },
     "testnet":{
-	  "1":{
+      "1":{
         "value":18
-	  },	
-	  "3285682":{
-	    "value":19
-	  },
-	  "3627850":{
-  	    "value":20
-	  }	  
+      },    
+      "3285682":{
+        "value":19
+      },
+      "3627850":{
+        "value":20
+      }   
     }
   },
   "dispenser_parsing_validation": {
+      "minimum_version_major": 9,
+      "minimum_version_minor": 59,
+      "minimum_version_revision": 4,
+      "block_index": 4986380,
+      "testnet_block_index": 5818423
+  },
+  "dispenser_origin_permission_extended": {
       "minimum_version_major": 9,
       "minimum_version_minor": 59,
       "minimum_version_revision": 4,

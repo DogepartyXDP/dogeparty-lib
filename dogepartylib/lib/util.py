@@ -422,7 +422,18 @@ def debit (db, address, asset, quantity, action=None, event=None):
     debit_cursor.execute(sql, bindings)
     debit_cursor.close()
 
-    BLOCK_LEDGER.append('{}{}{}{}'.format(block_index, address, asset, quantity))
+
+    ledger_entry = '{}{}{}{}'.format(block_index, address, asset, quantity)
+    
+    if enabled('ledger_hash_ordered'):
+        for next_ledger_entry_index,next_ledger_entry in enumerate(BLOCK_LEDGER):
+            if ledger_entry <= next_ledger_entry:
+                BLOCK_LEDGER.insert(next_ledger_entry_index, ledger_entry)
+                break
+        else:
+            BLOCK_LEDGER.append(ledger_entry)
+    else:
+        BLOCK_LEDGER.append(ledger_entry)
 
 class CreditError (Exception): pass
 def credit (db, address, asset, quantity, action=None, event=None):
@@ -489,7 +500,17 @@ def credit (db, address, asset, quantity, action=None, event=None):
     credit_cursor.execute(sql, bindings)
     credit_cursor.close()
 
-    BLOCK_LEDGER.append('{}{}{}{}'.format(block_index, address, asset, quantity))
+    ledger_entry = '{}{}{}{}'.format(block_index, address, asset, quantity)
+    
+    if enabled('ledger_hash_ordered'):
+        for next_ledger_entry_index,next_ledger_entry in enumerate(BLOCK_LEDGER):
+            if ledger_entry <= next_ledger_entry:
+                BLOCK_LEDGER.insert(next_ledger_entry_index, ledger_entry)
+                break
+        else:
+            BLOCK_LEDGER.append(ledger_entry)
+    else:
+        BLOCK_LEDGER.append(ledger_entry)
 
 class QuantityError(Exception): pass
 

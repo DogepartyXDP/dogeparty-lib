@@ -151,7 +151,7 @@ def validate (db, source, asset, give_quantity, escrow_quantity, mainchainrate, 
         return asset_id, None
 
 def compose (db, source, asset, give_quantity, escrow_quantity, mainchainrate, status, open_address=None, oracle_address=None):
-    assetid, problems = validate(db, source, asset, give_quantity, escrow_quantity, mainchainrate, status, open_address, util.CURRENT_BLOCK_INDEX)
+    assetid, problems = validate(db, source, asset, give_quantity, escrow_quantity, mainchainrate, status, open_address, util.CURRENT_BLOCK_INDEX, oracle_address)
     if problems: raise exceptions.ComposeError(problems)
 
     destination = []

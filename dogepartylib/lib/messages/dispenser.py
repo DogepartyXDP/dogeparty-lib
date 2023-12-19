@@ -131,6 +131,11 @@ def validate (db, source, asset, give_quantity, escrow_quantity, mainchainrate, 
             existing_balances = cursor.fetchall()
             if existing_balances[0]['cnt'] > 0:
                 problems.append('cannot open on another address if it has any balance history')
+                                    
+            if util.enabled("dispenser_doge_activity_check", block_index):
+                address_oldest_transaction = backend.get_oldest_tx(query_address)
+                if ("block_index" in address_oldest_transaction) and (address_oldest_transaction["block_index"] > 0) and (block_index > address_oldest_transaction["block_index"]):
+                    problems.append('cannot open on another address if it has any confirmed dogecoin txs')
 
         if len(problems) == 0:
             asset_id = util.generate_asset_id(asset, block_index)

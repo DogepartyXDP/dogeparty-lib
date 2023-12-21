@@ -18,10 +18,13 @@ from dogepartylib.lib import script
 from dogepartylib.lib import exceptions
 from dogepartylib.lib import util
 
-def maximum_data_chunk_size():
-    return bitcoinlib.core.script.MAX_SCRIPT_ELEMENT_SIZE - len(util.get_value_by_block_index("magic_word_prefix").encode()) - 44 # Redeemscript size for p2pkh addresses, multisig won't work here
+def maximum_data_chunk_size(pubkeylength):
+    if pubkeylength >= 0:
+        return bitcoinlib.core.script.MAX_SCRIPT_ELEMENT_SIZE - len(util.get_value_by_block_index("magic_word_prefix").encode()) - pubkeylength - 12 #Two bytes are for unique offset. This will work for a little more than 1000 outputs
+    else:
+        return bitcoinlib.core.script.MAX_SCRIPT_ELEMENT_SIZE - len(util.get_value_by_block_index("magic_word_prefix").encode()) - 44 # Redeemscript size for p2pkh addresses, multisig won't work here
 
-def calculate_outputs(destination_outputs, data_array, fee_per_kb):
+def calculate_outputs(destination_outputs, data_array, fee_per_kb, exact_fee=None):
     datatx_size = 10  # 10 base
     datatx_size += 181  # 181 for source input
     datatx_size += (25 + 9) * len(destination_outputs)  # destination outputs
@@ -39,9 +42,18 @@ def calculate_outputs(destination_outputs, data_array, fee_per_kb):
     data_value = math.ceil(datatx_necessary_fee / len(data_array))
 
     # adjust the data output with the new value and recalculate data_doge_out
-    data_output = (data_array, data_value)
     data_doge_out = data_value * len(data_array)
 
+    if exact_fee:
+        remain_fee = exact_fee - data_value * len(data_array)
+        if remain_fee > 0:
+            #if the dust isn't enough to reach the exact_fee, data value will be an array with only the last fee bumped
+            data_value = [data_value for i in range(len(data_array))]
+            data_value[len(data_array)-1] = data_value[len(data_array)-1] + remain_fee
+            data_doge_out = exact_fee
+
+    data_output = (data_array, data_value)
+    
     logger.getChild('p2shdebug').debug('datatx size: %d fee: %d' % (datatx_size, datatx_necessary_fee))
     logger.getChild('p2shdebug').debug('pretx output size: %d' % (pretx_output_size, ))
     logger.getChild('p2shdebug').debug('size_for_fee: %d' % (size_for_fee, ))
@@ -166,10 +178,17 @@ def decode_data_redeem_script(redeemScript, p2sh_is_segwit=False):
                         pos += 1
 
                         if valid_sig:
-                            redeem_script_is_valid = redeemScript[pos + 1] == bitcoinlib.core.script.OP_DROP and \
-                                redeemScript[pos + 2] == bitcoinlib.core.script.OP_DEPTH and \
-                                redeemScript[pos + 3] == 0 and \
-                                redeemScript[pos + 4] == bitcoinlib.core.script.OP_EQUAL
+                            uniqueOffsetLength = 0
+
+                            for i in range(pos+1, len(redeemScript)):
+                                if redeemScript[i] == bitcoinlib.core.script.OP_DROP:
+                                    uniqueOffsetLength = i-pos-1
+                                    break
+
+                            redeem_script_is_valid = redeemScript[pos + 1 + uniqueOffsetLength] == bitcoinlib.core.script.OP_DROP and \
+                                redeemScript[pos + 2 + uniqueOffsetLength] == bitcoinlib.core.script.OP_DEPTH and \
+                                redeemScript[pos + 3 + uniqueOffsetLength] == 0 and \
+                                redeemScript[pos + 4 + uniqueOffsetLength] == bitcoinlib.core.script.OP_EQUAL
         except Exception as e:
             pass #traceback.print_exc()
 

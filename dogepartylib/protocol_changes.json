@@ -312,7 +312,7 @@
       "minimum_version_major": 9,
       "minimum_version_minor": 59,
       "minimum_version_revision": 4,
-      "block_index": 4448783,
+      "block_index": 9999999,
       "testnet_block_index": 4083373
   },
   "burn_start": {
@@ -541,7 +541,7 @@
       "minimum_version_major": 9,
       "minimum_version_minor": 59,
       "minimum_version_revision": 4,
-      "block_index": 4986380,
+      "block_index": 9999999,
       "testnet_block_index": 5818423
   },
   "reopen_order_when_dogepay_expires_fix": {

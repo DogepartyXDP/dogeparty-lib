@@ -418,7 +418,6 @@ def construct (db, tx_info, encoding='auto',
             # minus two sign bytes.
             chunk_size = (33 * 2) - 1 - 8 - 2 - 2
         elif encoding == 'p2sh':
-            chunk_size = p2sh_encoding.maximum_data_chunk_size()
             pubkeylength = -1
             if dust_return_pubkey is not None:
                 pubkeylength = len(dust_return_pubkey)

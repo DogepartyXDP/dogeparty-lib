@@ -247,7 +247,8 @@ def validate (db, source, destination, asset, quantity, divisible, lock, reset, 
             elif block_index > 281236 or config.TESTNET or config.REGTEST:    # Protocol change.
                 fee = 5
         else:
-            fee = int(0.01 * config.UNIT)
+            pass
+            #fee = int(0.01 * config.UNIT)
         
         if fee and (not balances or balances[0]['quantity'] < fee):
             problems.append('insufficient funds')

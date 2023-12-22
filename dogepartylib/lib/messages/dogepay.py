@@ -32,13 +32,13 @@ def initialise(db):
                    ''')
                       # Disallows invalids: FOREIGN KEY (order_match_id) REFERENCES order_matches(id))
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      block_index_idx ON dogepays (block_index)
+                      dogepays_block_index_idx ON dogepays (block_index)
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      source_idx ON dogepays (source)
+                      dogepays_source_idx ON dogepays (source)
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      destination_idx ON dogepays (destination)
+                      dogepays_destination_idx ON dogepays (destination)
                    ''')
 def validate (db, source, order_match_id, block_index):
     problems = []

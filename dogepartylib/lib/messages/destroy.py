@@ -37,7 +37,7 @@ def initialise(db):
                       status_idx ON destructions (status)
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      address_idx ON destructions (source)
+                      destructions_address_idx ON destructions (source)
                    ''')
 
 

@@ -312,7 +312,7 @@
       "minimum_version_major": 9,
       "minimum_version_minor": 59,
       "minimum_version_revision": 4,
-      "block_index": 4448783,
+      "block_index": 9999999,
       "testnet_block_index": 4083373
   },
   "burn_start": {
@@ -541,7 +541,7 @@
       "minimum_version_major": 9,
       "minimum_version_minor": 59,
       "minimum_version_revision": 4,
-      "block_index": 4986380,
+      "block_index": 9999999,
       "testnet_block_index": 5818423
   },
   "reopen_order_when_dogepay_expires_fix": {
@@ -582,5 +582,33 @@
       "minimum_version_revision": 4,
       "block_index": 5011801,
       "testnet_block_index": 5878616
+  },
+  "pascal_string_removed": {
+      "minimum_version_major": 9,
+      "minimum_version_minor": 59,
+      "minimum_version_revision": 6,
+      "block_index": 9999999,
+      "testnet_block_index": 5885210
+  },
+  "issuance_description_special_null": {
+      "minimum_version_major": 9,
+      "minimum_version_minor": 59,
+      "minimum_version_revision": 6,
+      "block_index": 9999999,
+      "testnet_block_index": 5885210
+  },
+  "numeric_asset_fee": {
+      "minimum_version_major": 9,
+      "minimum_version_minor": 59,
+      "minimum_version_revision": 6,
+      "block_index": 9999999,
+      "testnet_block_index": 5885210
+  },
+  "multiple_dispenses": {
+      "minimum_version_major": 9,
+      "minimum_version_minor": 59,
+      "minimum_version_revision": 6,
+      "block_index": 9999999,
+      "testnet_block_index": 5835659
   }
 }

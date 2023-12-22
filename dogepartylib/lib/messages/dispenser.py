@@ -21,6 +21,7 @@ from dogepartylib.lib import util
 from dogepartylib.lib import log
 from dogepartylib.lib import message_type
 from dogepartylib.lib import address
+from dogepartylib.lib import backend
 
 FORMAT = '>QQQQB'
 LENGTH = 33

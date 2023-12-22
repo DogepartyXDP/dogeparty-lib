@@ -91,20 +91,20 @@ def initialise(db):
             cursor.execute('ALTER TABLE new_issuances RENAME TO issuances')
 
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      block_index_idx ON issuances (block_index)
+                      issuances_block_index_idx ON issuances (block_index)
                     ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
                       valid_asset_idx ON issuances (asset, status)
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      status_idx ON issuances (status)
+                      issuances_status_idx ON issuances (status)
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      source_idx ON issuances (source)
+                      issuances_source_idx ON issuances (source)
                    ''')
 
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      asset_longname_idx ON issuances (asset_longname)
+                      issuances_asset_longname_idx ON issuances (asset_longname)
                    ''')
 
 def validate (db, source, destination, asset, quantity, divisible, lock, reset, callable_, call_date, call_price, description, subasset_parent, subasset_longname, block_index):
@@ -237,7 +237,10 @@ def validate (db, source, destination, asset, quantity, divisible, lock, reset, 
                     # subasset issuance is 0.25
                     fee = int(0.25 * config.UNIT)
                 elif len(asset) >= 13:
-                    fee = 0
+                    if util.enabled('numeric_asset_fee'):
+                        fee = int(0.10 * config.UNIT)
+                    else:
+                        fee = 0
                 else:
                     fee = int(0.5 * config.UNIT)
             elif block_index >= 291700 or config.TESTNET or config.REGTEST:     # Protocol change.
@@ -246,8 +249,12 @@ def validate (db, source, destination, asset, quantity, divisible, lock, reset, 
                 fee = 5 * config.UNIT
             elif block_index > 281236 or config.TESTNET or config.REGTEST:    # Protocol change.
                 fee = 5
-            if fee and (not balances or balances[0]['quantity'] < fee):
-                problems.append('insufficient funds')
+        else:
+            pass
+            #fee = int(0.01 * config.UNIT)
+        
+        if fee and (not balances or balances[0]['quantity'] < fee):
+            problems.append('insufficient funds')
 
     if not (block_index >= 317500 or config.TESTNET or config.REGTEST):  # Protocol change.
         if len(description) > 42:
@@ -488,6 +495,11 @@ def parse (db, tx, message, message_type_id):
         if not util.enabled('integer_overflow_fix', block_index=tx['block_index']) and 'total quantity overflow' in problems:
             quantity = 0
 
+
+    # Debit fee.
+    if status == 'valid':
+        util.debit(db, tx['source'], config.XDP, fee, action="issuance fee", event=tx['tx_hash'])
+
     # Reset?
     if reset:
         balances_cursor = issuance_parse_cursor.execute('''SELECT * FROM balances WHERE asset = ? AND quantity > 0''', (asset,))
@@ -554,10 +566,6 @@ def parse (db, tx, message, message_type_id):
         else:
             issuer = tx['source']
             transfer = False
-
-        # Debit fee.
-        if status == 'valid':
-            util.debit(db, tx['source'], config.XDP, fee, action="issuance fee", event=tx['tx_hash'])
 
         # Lock?
         if not isinstance(lock,bool):

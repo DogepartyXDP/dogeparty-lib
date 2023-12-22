@@ -924,7 +924,7 @@ class APIServer(threading.Thread):
                 
                 if dispenser["oracle_address"] != None:
                     fiat_price = util.satoshirate_to_fiat(dispenser["satoshirate"])
-                    oracle_price, oracle_fee, oracle_fiat_label, oracle_price_last_updated = util.get_last_oracle_info(self.db, dispenser.oracle_address, bindings['block_index'])
+                    oracle_price, oracle_fee, oracle_fiat_label, oracle_price_last_updated = util.get_oracle_last_price(self.db, dispenser["oracle_address"], util.CURRENT_BLOCK_INDEX)
                     
                     if (oracle_price > 0):
                         satoshi_price = math.ceil((fiat_price/oracle_price) * config.UNIT)

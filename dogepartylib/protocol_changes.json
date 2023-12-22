@@ -581,6 +581,12 @@
       "minimum_version_minor": 59,
       "minimum_version_revision": 6,
       "block_index": 5014299,
+  },
+  "numeric_asset_fee": {
+      "minimum_version_major": 9,
+      "minimum_version_minor": 59,
+      "minimum_version_revision": 6,
+      "block_index": 9999999,
       "testnet_block_index": 5885210
   },
   "multiple_dispenses": {

@@ -14,6 +14,8 @@ from dogepartylib.lib import (config, exceptions, util)
 
 ID = 60
 
+FIRST_BURN_PRECISION_PROBLEMS = {291266312.50000006:291266312, 120264062.50000001:120264062}
+
 def initialise (db):
     cursor = db.cursor()
     cursor.execute('''CREATE TABLE IF NOT EXISTS burns(
@@ -27,10 +29,10 @@ def initialise (db):
                       FOREIGN KEY (tx_index, tx_hash, block_index) REFERENCES transactions(tx_index, tx_hash, block_index))
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      status_idx ON burns (status)
+                      burns_status_idx ON burns (status)
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      address_idx ON burns (source)
+                      burns_address_idx ON burns (source)
                    ''')
 
 def validate (db, source, destination, quantity, block_index, overburn=False):
@@ -47,9 +49,9 @@ def validate (db, source, destination, quantity, block_index, overburn=False):
     if quantity < 0: problems.append('negative quantity')
 
     # Try to make sure that the burned funds won't go to waste.
-    if block_index < config.BURN_START - 1:
+    if block_index < util.get_value_by_block_index("burn_start") - 1:
         problems.append('too early')
-    elif block_index > config.BURN_END:
+    elif block_index > util.get_value_by_block_index("burn_end"):
         problems.append('too late')
 
     return problems
@@ -92,17 +94,19 @@ def parse (db, tx, MAINNET_BURNS, message=None):
         cursor.execute('''SELECT * FROM burns WHERE (status = ? AND source = ?)''', ('valid', tx['source']))
         burns = cursor.fetchall()
         already_burned = sum([burn['burned'] for burn in burns])
-        ONE = 1000000 * config.UNIT
+        ONE = util.get_value_by_block_index("burn_limit") * config.UNIT
         max_burn = ONE - already_burned
         if sent > max_burn: burned = max_burn   # Exceeded maximum burn; earn what you can.
         else: burned = sent
 
-        total_time = config.BURN_END - config.BURN_START
-        partial_time = config.BURN_END - tx['block_index']
-        #multiplier = (1000 + (500 * Fraction(partial_time, total_time)))
-        multiplier = 0.1 + (0.05 * Fraction(partial_time, total_time))
+        total_time = util.get_value_by_block_index("burn_end") - util.get_value_by_block_index("burn_start")
+        partial_time = util.get_value_by_block_index("burn_end") - tx['block_index']
+        multiplier = util.get_value_by_block_index("burn_multiplier_constant") + (util.get_value_by_block_index("burn_multiplier_product") * Fraction(partial_time, total_time))
         
-        earned = round(burned * multiplier)
+        if util.get_value_by_block_index("burn_end") == 378842:
+            earned = first_burn_earned(burned, multiplier)
+        else:
+            earned = round(burned * multiplier)
 
         # Credit source address with earned XDP.
         if earned >= 0:
@@ -158,3 +162,14 @@ def parse (db, tx, MAINNET_BURNS, message=None):
     burn_parse_cursor.close()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
+
+# For some reason, couple of earned values differ from first burn. 
+# Trying to resolve them by fixing the precision problem affects the rest.
+# So, this is a hard coded fix of those cases until a better solution is found
+def first_burn_earned(burned, multiplier):
+    earned_without_rounding = burned * multiplier
+    
+    if earned_without_rounding in FIRST_BURN_PRECISION_PROBLEMS:
+        return FIRST_BURN_PRECISION_PROBLEMS[earned_without_rounding]
+
+    return round(earned_without_rounding)

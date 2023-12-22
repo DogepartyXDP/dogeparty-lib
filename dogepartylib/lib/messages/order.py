@@ -46,10 +46,10 @@ def initialise(db):
                       PRIMARY KEY (tx_index, tx_hash))
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      block_index_idx ON orders (block_index)
+                      orders_block_index_idx ON orders (block_index)
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      index_hash_idx ON orders (tx_index, tx_hash)
+                      orders_index_hash_idx ON orders (tx_index, tx_hash)
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
                       expire_idx ON orders (expire_index, status)
@@ -64,7 +64,7 @@ def initialise(db):
                       give_get_status_idx ON orders (get_asset, give_asset, status)
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      source_idx ON orders (source)
+                      orders_source_idx ON orders (source)
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
                       give_asset_idx ON orders (give_asset)
@@ -104,7 +104,7 @@ def initialise(db):
                       backward_status_idx ON order_matches (backward_asset, status)
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      id_idx ON order_matches (id)
+                      order_matches_id_idx ON order_matches (id)
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
                       tx0_address_idx ON order_matches (tx0_address)
@@ -123,10 +123,10 @@ def initialise(db):
                       FOREIGN KEY (order_index, order_hash) REFERENCES orders(tx_index, tx_hash))
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      block_index_idx ON order_expirations (block_index)
+                      order_expirations_block_index_idx ON order_expirations (block_index)
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      source_idx ON order_expirations (source)
+                      order_expirations_source_idx ON order_expirations (source)
                    ''')
 
     # Order Match Expirations
@@ -139,13 +139,13 @@ def initialise(db):
                       FOREIGN KEY (block_index) REFERENCES blocks(block_index))
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      block_index_idx ON order_match_expirations (block_index)
+                      order_match_expirations_block_index_idx ON order_match_expirations (block_index)
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      tx0_address_idx ON order_match_expirations (tx0_address)
+                      order_match_expirations_tx0_address_idx ON order_match_expirations (tx0_address)
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      tx1_address_idx ON order_match_expirations (tx1_address)
+                      order_match_expirations_tx1_address_idx ON order_match_expirations (tx1_address)
                    ''')
 
 def exact_penalty (db, address, block_index, order_match_id):
@@ -247,7 +247,7 @@ def cancel_order_match (db, order_match, status, block_index):
             tx0_fee_required_remaining = tx0_order['fee_required_remaining']
         tx0_order_status = tx0_order['status']
         
-        if (tx0_order_status == 'filled'): #This case could happen if a DOGEpay expires and before the expiration, the order was filled by a correct DOGEpay
+        if (tx0_order_status == 'filled' and util.enabled("reopen_order_when_dogepay_expires_fix", block_index)): #This case could happen if a DOGEpay expires and before the expiration, the order was filled by a correct DOGEpay
             tx0_order_status = 'open' # So, we have to open the order again
         
         bindings = {
@@ -281,7 +281,7 @@ def cancel_order_match (db, order_match, status, block_index):
         else:
             tx1_fee_required_remaining = tx1_order['fee_required_remaining']
         tx1_order_status = tx1_order['status']
-        if (tx1_order_status == 'filled'): #This case could happen if a DOGEpay expires and before the expiration, the order was filled by a correct DOGEpay
+        if (tx1_order_status == 'filled' and util.enabled("reopen_order_when_dogepay_expires_fix", block_index)): #This case could happen if a DOGEpay expires and before the expiration, the order was filled by a correct DOGEpay
             tx1_order_status = 'open' # So, we have to open the order again
         
         bindings = {
@@ -712,14 +712,9 @@ def match (db, tx, block_index=None):
             log.message(db, block_index, 'update', 'orders', bindings)
 
             # Calculate when the match will expire.
-            if block_index >= 308000 or config.TESTNET or config.REGTEST:      # Protocol change.
-                match_expire_index = block_index + 120
-            elif block_index >= 286500 or config.TESTNET or config.REGTEST:    # Protocol change.
-                match_expire_index = block_index + 10
-            else:
-                match_expire_index = min(tx0['expire_index'], tx1['expire_index'])
-
-            # Record order match.
+            match_expire_index = block_index + util.get_value_by_block_index("order_match_expire_time")
+			
+			# Record order match.
             bindings = {
                 'id': util.make_id(tx0['tx_hash'], tx['tx_hash']),
                 'tx0_index': tx0['tx_index'],

@@ -126,13 +126,13 @@ def validate (db, source, destination, asset, quantity, divisible, lock, reset, 
 
     if not isinstance(quantity, int):
         problems.append('quantity must be in satoshis')
-        return call_date, call_price, problems, fee, description, divisible, None, None
+        return call_date, call_price, problems, fee, description, divisible, lock, reset, None, None
     if call_date and not isinstance(call_date, int):
         problems.append('call_date must be epoch integer')
-        return call_date, call_price, problems, fee, description, divisible, None, None
+        return call_date, call_price, problems, fee, description, divisible, lock, reset, None, None
     if call_price and not isinstance(call_price, float):
         problems.append('call_price must be a float')
-        return call_date, call_price, problems, fee, description, divisible, None, None
+        return call_date, call_price, problems, fee, description, divisible, lock, reset, None, None
 
     if quantity < 0: problems.append('negative quantity')
     if call_price < 0: problems.append('negative call price')
@@ -345,7 +345,7 @@ def compose (db, source, transfer_destination, asset, quantity, divisible, lock,
             curr_format = util.get_value_by_block_index("issuance_asset_serialization_format") + '{}s'.format(len(DESCRIPTION_MARK_BYTE)+len(DESCRIPTION_NULL_ACTION))
             encoded_description = DESCRIPTION_MARK_BYTE+DESCRIPTION_NULL_ACTION.encode('utf-8')
         else:
-            if len(validated_description) <= 42:
+            if (len(validated_description) <= 42) and not util.enabled('pascal_string_removed'):
                 curr_format = util.get_value_by_block_index("issuance_asset_serialization_format") + '{}p'.format(len(validated_description) + 1)
             else:
                 curr_format = util.get_value_by_block_index("issuance_asset_serialization_format") + '{}s'.format(len(validated_description))
@@ -424,7 +424,7 @@ def parse (db, tx, message, message_type_id):
             if len(message) - asset_format_length == 0:
                 message = message + b'\x00' #If the message length is 0, then the description will be interpreted as a blank string
         
-            if len(message) - asset_format_length <= 42:
+            if (len(message) - asset_format_length <= 42) and not util.enabled('pascal_string_removed'):
                 curr_format = asset_format + '{}p'.format(len(message) - asset_format_length)
             else:
                 curr_format = asset_format + '{}s'.format(len(message) - asset_format_length)

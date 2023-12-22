@@ -23,6 +23,9 @@ ID = 20
 SUBASSET_ID = 21
 # NOTE: Pascal strings are used for storing descriptions for backwards‐compatibility.
 
+DESCRIPTION_MARK_BYTE = b'\xc0'
+DESCRIPTION_NULL_ACTION = "NULL"
+
 def initialise(db):
     cursor = db.cursor()
     cursor.execute('''CREATE TABLE IF NOT EXISTS issuances(
@@ -123,13 +126,13 @@ def validate (db, source, destination, asset, quantity, divisible, lock, reset, 
 
     if not isinstance(quantity, int):
         problems.append('quantity must be in satoshis')
-        return call_date, call_price, problems, fee, description, divisible, None, None
+        return call_date, call_price, problems, fee, description, divisible, lock, reset, None, None
     if call_date and not isinstance(call_date, int):
         problems.append('call_date must be epoch integer')
-        return call_date, call_price, problems, fee, description, divisible, None, None
+        return call_date, call_price, problems, fee, description, divisible, lock, reset, None, None
     if call_price and not isinstance(call_price, float):
         problems.append('call_price must be a float')
-        return call_date, call_price, problems, fee, description, divisible, None, None
+        return call_date, call_price, problems, fee, description, divisible, lock, reset, None, None
 
     if quantity < 0: problems.append('negative quantity')
     if call_price < 0: problems.append('negative call price')
@@ -335,7 +338,7 @@ def compose (db, source, transfer_destination, asset, quantity, divisible, lock,
                 #   generate a random numeric asset id which will map to this subasset
                 asset = util.generate_random_asset()
 
-    call_date, call_price, problems, fee, description, divisible, lock, reset, reissuance, reissued_asset_longname = validate(db, source, transfer_destination, asset, quantity, divisible, lock, reset, callable_, call_date, call_price, description, subasset_parent, subasset_longname, util.CURRENT_BLOCK_INDEX)
+    call_date, call_price, problems, fee, validated_description, divisible, lock, reset, reissuance, reissued_asset_longname = validate(db, source, transfer_destination, asset, quantity, divisible, lock, reset, callable_, call_date, call_price, description, subasset_parent, subasset_longname, util.CURRENT_BLOCK_INDEX)
     if problems: raise exceptions.ComposeError(problems)
 
     asset_id = util.generate_asset_id(asset, util.CURRENT_BLOCK_INDEX)
@@ -343,12 +346,20 @@ def compose (db, source, transfer_destination, asset, quantity, divisible, lock,
         # Type 20 standard issuance FORMAT_2 >QQ??If
         #   used for standard issuances and all reissuances
         data = message_type.pack(ID)
-        if len(description) <= 42:
-            curr_format = util.get_value_by_block_index("issuance_asset_serialization_format") + '{}p'.format(len(description) + 1)
+
+        if description == None and util.enabled("issuance_description_special_null"):
+            #a special message is created to be catched by the parse function
+            curr_format = util.get_value_by_block_index("issuance_asset_serialization_format") + '{}s'.format(len(DESCRIPTION_MARK_BYTE)+len(DESCRIPTION_NULL_ACTION))
+            encoded_description = DESCRIPTION_MARK_BYTE+DESCRIPTION_NULL_ACTION.encode('utf-8')
         else:
-            curr_format = util.get_value_by_block_index("issuance_asset_serialization_format") + '{}s'.format(len(description))
+            if (len(validated_description) <= 42) and not util.enabled('pascal_string_removed'):
+                curr_format = util.get_value_by_block_index("issuance_asset_serialization_format") + '{}p'.format(len(validated_description) + 1)
+            else:
+                curr_format = util.get_value_by_block_index("issuance_asset_serialization_format") + '{}s'.format(len(validated_description))
+            encoded_description = validated_description.encode('utf-8')
+            
         data += struct.pack(curr_format, asset_id, quantity, 1 if divisible else 0, 1 if lock else 0, 1 if reset else 0, 1 if callable_ else 0,
-            call_date or 0, call_price or 0.0, description.encode('utf-8'))
+            call_date or 0, call_price or 0.0, encoded_description)
     else:
         # Type 21 subasset issuance SUBASSET_FORMAT >QQ?B
         #   Used only for initial subasset issuance
@@ -356,8 +367,16 @@ def compose (db, source, transfer_destination, asset, quantity, divisible, lock,
         compacted_subasset_longname = util.compact_subasset_longname(subasset_longname)
         compacted_subasset_length = len(compacted_subasset_longname)
         data = message_type.pack(SUBASSET_ID)
-        curr_format = util.get_value_by_block_index("issuance_subasset_serialization_format") + '{}s'.format(compacted_subasset_length) + '{}s'.format(len(description))
-        data += struct.pack(curr_format, asset_id, quantity, 1 if divisible else 0, 1 if lock else 0, 1 if reset else 0, compacted_subasset_length, compacted_subasset_longname, description.encode('utf-8'))
+
+        if description == None and util.enabled("issuance_description_special_null"):
+            #a special message is created to be catched by the parse function
+            curr_format = util.get_value_by_block_index("issuance_subasset_serialization_format") + '{}s'.format(compacted_subasset_length) + '{}s'.format(len(DESCRIPTION_MARK_BYTE)+len(DESCRIPTION_NULL_ACTION))
+            encoded_description = DESCRIPTION_MARK_BYTE+DESCRIPTION_NULL_ACTION.encode('utf-8')
+        else:       
+            curr_format = util.get_value_by_block_index("issuance_subasset_serialization_format") + '{}s'.format(compacted_subasset_length) + '{}s'.format(len(validated_description))          
+            encoded_description = validated_description.encode('utf-8')
+        
+        data += struct.pack(curr_format, asset_id, quantity, 1 if divisible else 0, 1 if lock else 0, 1 if reset else 0, compacted_subasset_length, compacted_subasset_longname, encoded_description)
 
     if transfer_destination:
         destination_outputs = [(transfer_destination, None)]
@@ -400,12 +419,19 @@ def parse (db, tx, message, message_type_id):
             try:
                 description = description.decode('utf-8')
             except UnicodeDecodeError:
+                description_data = description
                 description = ''
+                if description_data[0:1] == DESCRIPTION_MARK_BYTE:
+                    try:
+                        if description_data[1:].decode('utf-8') == DESCRIPTION_NULL_ACTION:
+                            description = None
+                    except UnicodeDecodeError:
+                        description = '' 
         elif (tx['block_index'] > 283271 or config.TESTNET or config.REGTEST) and len(message) >= asset_format_length: # Protocol change.
             if len(message) - asset_format_length == 0:
                 message = message + b'\x00' #If the message length is 0, then the description will be interpreted as a blank string
         
-            if len(message) - asset_format_length <= 42:
+            if (len(message) - asset_format_length <= 42) and not util.enabled('pascal_string_removed'):
                 curr_format = asset_format + '{}p'.format(len(message) - asset_format_length)
             else:
                 curr_format = asset_format + '{}s'.format(len(message) - asset_format_length)
@@ -423,7 +449,14 @@ def parse (db, tx, message, message_type_id):
             try:
                 description = description.decode('utf-8')
             except UnicodeDecodeError:
+                description_data = description
                 description = ''
+                if description_data[0:1] == DESCRIPTION_MARK_BYTE:
+                    try:
+                        if description_data[1:].decode('utf-8') == DESCRIPTION_NULL_ACTION:
+                            description = None
+                    except UnicodeDecodeError:
+                        description = ''        
         else:
             if len(message) != LENGTH_1:
                 raise exceptions.UnpackError
@@ -431,6 +464,9 @@ def parse (db, tx, message, message_type_id):
             lock, reset, callable_, call_date, call_price, description = False, False, False, 0, 0.0, ''
         try:
             asset = util.generate_asset_name(asset_id, tx['block_index'])
+            if description == None:
+                description = util.get_asset_description(db, asset)
+            
             status = 'valid'
         except exceptions.AssetIDError:
             asset = None

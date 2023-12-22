@@ -5,7 +5,7 @@ from dogepartylib.lib.messages.versions import enhanced_send
 from dogepartylib.lib.messages.versions import mpma
 from dogepartylib.lib import util
 from dogepartylib.lib import exceptions
-from counterpartylib.lib import config
+from dogepartylib.lib import config
 
 ID = send1.ID
 

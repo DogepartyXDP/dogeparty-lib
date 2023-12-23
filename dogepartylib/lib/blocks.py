@@ -274,7 +274,7 @@ def initialise(db):
                       PRIMARY KEY (tx_index, tx_hash, block_index))
                     ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      block_index_idx ON transactions (block_index)
+                      transactions_block_index_idx ON transactions (block_index)
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
                       tx_index_idx ON transactions (tx_index)
@@ -322,10 +322,10 @@ def initialise(db):
                       FOREIGN KEY (block_index) REFERENCES blocks(block_index))
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      address_idx ON credits (address)
+                      credits_address_idx ON credits (address)
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      asset_idx ON credits (asset)
+                      credits_asset_idx ON credits (asset)
                    ''')
 
     # Balances
@@ -335,13 +335,13 @@ def initialise(db):
                       quantity INTEGER)
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      address_asset_idx ON balances (address, asset)
+                      balances_address_asset_idx ON balances (address, asset)
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      address_idx ON balances (address)
+                      balances_address_idx ON balances (address)
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      asset_idx ON balances (asset)
+                      balances_asset_idx ON balances (asset)
                    ''')
 
     # Assets
@@ -409,7 +409,7 @@ def initialise(db):
                   ''')
                       # TODO: FOREIGN KEY (block_index) REFERENCES blocks(block_index) DEFERRABLE INITIALLY DEFERRED)
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      block_index_idx ON messages (block_index)
+                      messages_block_index_idx ON messages (block_index)
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
                       block_index_message_index_idx ON messages (block_index, message_index)
@@ -424,6 +424,19 @@ def initialise(db):
                         block_index INTEGER PRIMARY KEY,
                         first_undo_index INTEGER)
                    ''')
+                   
+    cursor.execute('''CREATE TABLE IF NOT EXISTS transaction_outputs(
+                        tx_index,
+                        tx_hash TEXT, 
+                        block_index INTEGER,
+                        out_index INTEGER,
+                        destination TEXT,
+                        doge_amount INTEGER,
+                        PRIMARY KEY (tx_hash, out_index),
+                        FOREIGN KEY (tx_index, tx_hash, block_index) REFERENCES transactions(tx_index, tx_hash, block_index))
+                   ''')
+                   
+                   
     # Create undolog triggers for all tables in TABLES list, plus the 'balances' table
     for table in UNDOLOG_TABLES:
         columns = [column['name'] for column in cursor.execute('''PRAGMA table_info({})'''.format(table))]
@@ -594,7 +607,7 @@ def get_tx_info1(tx_hex, block_index, block_parser=None):
     """
     ctx = backend.deserialize(tx_hex)
 
-    magic_word_prefix = util.get_value_by_block_index("magic_word_prefix", block_index)
+    magic_word_prefix = bytes(util.get_value_by_block_index("magic_word_prefix", block_index),"utf-8")
 
     def get_pubkeyhash(scriptpubkey):
         asm = script.get_asm(scriptpubkey) 
@@ -952,6 +965,7 @@ def reinitialise(db, block_index=None):
 
     # For rollbacks, just delete new blocks and then reparse what’s left.
     if block_index:
+        cursor.execute('''DELETE FROM transaction_outputs WHERE block_index > ?''', (block_index,))
         cursor.execute('''DELETE FROM transactions WHERE block_index > ?''', (block_index,))
         cursor.execute('''DELETE FROM blocks WHERE block_index > ?''', (block_index,))
     elif config.TESTNET or config.REGTEST:  # block_index NOT specified and we are running testnet
@@ -1012,6 +1026,7 @@ def reparse(db, block_index=None, quiet=False):
                 undolog_cursor.execute(entry[1])
 
             # Trim back tx and blocks
+            undolog_cursor.execute('''DELETE FROM transaction_outputs WHERE block_index > ?''', (block_index,))
             undolog_cursor.execute('''DELETE FROM transactions WHERE block_index > ?''', (block_index,))
             undolog_cursor.execute('''DELETE FROM blocks WHERE block_index > ?''', (block_index,))
             # As well as undolog entries...
@@ -1100,8 +1115,11 @@ def list_tx(db, block_hash, block_index, block_time, tx_hash, tx_index, tx_hex=N
 
     source, destination, doge_amount, fee, data, decoded_tx = get_tx_info(tx_hex, db=db)
 
+    outs = []
+    first_one = True #This is for backward compatibility with unique dispensers
     if not source and decoded_tx and util.enabled('dispensers', block_index):
         outputs = decoded_tx[1]
+        out_index = 0
         for out in outputs:
             if out[0] != decoded_tx[0][0] and dispenser.is_dispensable(db, out[0], out[1]):
                 source = decoded_tx[0][0]
@@ -1110,7 +1128,13 @@ def list_tx(db, block_hash, block_index, block_time, tx_hash, tx_index, tx_hex=N
                 fee = 0
                 data = struct.pack(config.SHORT_TXTYPE_FORMAT, dispenser.DISPENSE_ID)
                 data += b'\x00'
-                break # Prevent inspection of further dispenses (only first one is valid)
+                
+                if util.enabled("multiple_dispenses"):
+                    outs.append({"destination":out[0], "doge_amount":out[1], "out_index":out_index})
+                else:
+                    break # Prevent inspection of further dispenses (only first one is valid)
+                    
+            out_index = out_index + 1
 
     # For mempool
     if block_hash == None:
@@ -1143,6 +1167,23 @@ def list_tx(db, block_hash, block_index, block_time, tx_hash, tx_index, tx_hex=N
                              fee,
                              data)
                       )
+        
+        for next_out in outs:
+            cursor.execute('''INSERT INTO transaction_outputs(
+                                tx_index,
+                                tx_hash,
+                                block_index,
+                                out_index,
+                                destination,
+                                doge_amount) VALUES (?,?,?,?,?,?)''',
+                                (tx_index,
+                                 tx_hash,
+                                 block_index,
+                                 next_out["out_index"],
+                                 next_out["destination"],
+                                 next_out["doge_amount"])    
+                          )
+        
         cursor.close()
         return tx_index + 1
     else:

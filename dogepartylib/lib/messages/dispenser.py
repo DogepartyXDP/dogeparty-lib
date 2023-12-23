@@ -21,6 +21,7 @@ from dogepartylib.lib import util
 from dogepartylib.lib import log
 from dogepartylib.lib import message_type
 from dogepartylib.lib import address
+from dogepartylib.lib import backend
 
 FORMAT = '>QQQQB'
 LENGTH = 33
@@ -50,10 +51,10 @@ def initialise(db):
                    ''')
                       # Disallows invalids: FOREIGN KEY (order_match_id) REFERENCES order_matches(id))
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      source_idx ON dispensers (source)
+                      dispensers_source_idx ON dispensers (source)
                    ''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS
-                      asset_idx ON dispensers (asset)
+                      dispensers_asset_idx ON dispensers (asset)
                    ''')
 
     cursor.execute('''CREATE TABLE IF NOT EXISTS dispenses(
@@ -172,6 +173,11 @@ def validate (db, source, asset, give_quantity, escrow_quantity, mainchainrate, 
                 
                     if existing_balances[0]['cnt'] > 0:
                         problems.append('cannot open on another address if it has any balance history')
+                                    
+            if util.enabled("dispenser_doge_activity_check", block_index):
+                address_oldest_transaction = backend.get_oldest_tx(query_address)
+                if ("block_index" in address_oldest_transaction) and (address_oldest_transaction["block_index"] > 0) and (block_index > address_oldest_transaction["block_index"]):
+                    problems.append('cannot open on another address if it has any confirmed dogecoin txs')
 
         if len(problems) == 0:
             asset_id = util.generate_asset_id(asset, block_index)
@@ -191,8 +197,8 @@ def validate (db, source, asset, give_quantity, escrow_quantity, mainchainrate, 
     else:
         return asset_id, None
 
-def compose (db, source, asset, give_quantity, escrow_quantity, mainchainrate, status, open_address=None):
-    assetid, problems = validate(db, source, asset, give_quantity, escrow_quantity, mainchainrate, status, open_address, util.CURRENT_BLOCK_INDEX)
+def compose (db, source, asset, give_quantity, escrow_quantity, mainchainrate, status, open_address=None, oracle_address=None):
+    assetid, problems = validate(db, source, asset, give_quantity, escrow_quantity, mainchainrate, status, open_address, util.CURRENT_BLOCK_INDEX, oracle_address)
     if problems: raise exceptions.ComposeError(problems)
 
     destination = []
@@ -422,65 +428,77 @@ def is_dispensable(db, address, amount):
 
 def dispense(db, tx):
     cursor = db.cursor()
-    cursor.execute('SELECT * FROM dispensers WHERE source=:source AND status=:status ORDER BY asset', {
-        'source': tx['destination'],
-        'status': STATUS_OPEN
-    })
-    dispensers = cursor.fetchall()
-
+    
+    outs = []
+    if util.enabled("multiple_dispenses"):
+        cursor.execute('SELECT txs.source AS source, txs_outs.* FROM transaction_outputs txs_outs LEFT JOIN transactions txs ON txs.tx_hash = txs_outs.tx_hash WHERE txs_outs.tx_hash=:tx_hash ORDER BY txs_outs.out_index', {
+            'tx_hash': tx['tx_hash']
+        })
+        outs = cursor.fetchall()
+    else:
+        outs = [tx]
+    
     dispense_index = 0
-    for dispenser in dispensers:
-        satoshirate = dispenser['satoshirate']
-        give_quantity = dispenser['give_quantity']
+        
+    for next_out in outs:
+        cursor.execute('SELECT * FROM dispensers WHERE source=:source AND status=:status ORDER BY asset', {
+            'source': next_out['destination'],
+            'status': STATUS_OPEN
+        })
+        dispensers = cursor.fetchall()
 
-        if satoshirate > 0 and give_quantity > 0:
-            if (dispenser['oracle_address'] != None) and util.enabled('oracle_dispensers', tx['block_index']):
-                last_price, last_fee, last_fiat_label, last_updated = util.get_oracle_last_price(db, dispenser['oracle_address'], tx['block_index'])
-                fiatrate = util.satoshirate_to_fiat(satoshirate)
-                must_give = int(floor(((tx['doge_amount'] / config.UNIT) * last_price)/fiatrate))
-            else:
-                must_give = int(floor(tx['doge_amount'] / satoshirate))
-                
-            remaining = int(floor(dispenser['give_remaining'] / give_quantity))
-            actually_given = min(must_give, remaining) * give_quantity
-            give_remaining = dispenser['give_remaining'] - actually_given
+        for dispenser in dispensers:
+            satoshirate = dispenser['satoshirate']
+            give_quantity = dispenser['give_quantity']
 
-            assert give_remaining >= 0
+            if satoshirate > 0 and give_quantity > 0:
+                if (dispenser['oracle_address'] != None) and util.enabled('oracle_dispensers', next_out['block_index']):
+                    last_price, last_fee, last_fiat_label, last_updated = util.get_oracle_last_price(db, dispenser['oracle_address'], next_out['block_index'])
+                    fiatrate = util.satoshirate_to_fiat(satoshirate)
+                    must_give = int(floor(((next_out['doge_amount'] / config.UNIT) * last_price)/fiatrate))
+                else:
+                    must_give = int(floor(next_out['doge_amount'] / satoshirate))
+                    
+                remaining = int(floor(dispenser['give_remaining'] / give_quantity))
+                actually_given = min(must_give, remaining) * give_quantity
+                give_remaining = dispenser['give_remaining'] - actually_given
 
-            # Skip dispense if quantity is 0
-            if util.enabled('zero_quantity_value_adjustment_1') and actually_given==0:
-                continue
+                assert give_remaining >= 0
 
-            util.credit(db, tx['source'], dispenser['asset'], actually_given, action='dispense', event=tx['tx_hash'])
+                # Skip dispense if quantity is 0
+                if util.enabled('zero_quantity_value_adjustment_1') and actually_given==0:
+                    continue
 
-            dispenser['give_remaining'] = give_remaining
-            if give_remaining < dispenser['give_quantity']:
-                # close the dispenser
-                dispenser['give_remaining'] = 0
-                if give_remaining > 0:
-                    # return the remaining to the owner
-                    util.credit(db, dispenser['source'], dispenser['asset'], give_remaining, action='dispenser close', event=tx['tx_hash'])
-                dispenser['status'] = STATUS_CLOSED
+                util.credit(db, next_out['source'], dispenser['asset'], actually_given, action='dispense', event=next_out['tx_hash'])
 
-            dispenser['block_index'] = tx['block_index']
-            dispenser['prev_status'] = STATUS_OPEN
-            cursor.execute('UPDATE DISPENSERS SET give_remaining=:give_remaining, status=:status \
-                    WHERE source=:source AND asset=:asset AND satoshirate=:satoshirate AND give_quantity=:give_quantity AND status=:prev_status', dispenser)
+                dispenser['give_remaining'] = give_remaining
+                if give_remaining < dispenser['give_quantity']:
+                    # close the dispenser
+                    dispenser['give_remaining'] = 0
+                    if give_remaining > 0:
+                        # return the remaining to the owner
+                        util.credit(db, dispenser['source'], dispenser['asset'], give_remaining, action='dispenser close', event=next_out['tx_hash'])
+                    dispenser['status'] = STATUS_CLOSED
 
-            bindings = {
-                'tx_index': tx['tx_index'],
-                'tx_hash': tx['tx_hash'],
-                'dispense_index': dispense_index,
-                'block_index': tx['block_index'],
-                'source': tx['destination'],
-                'destination': tx['source'],
-                'asset': dispenser['asset'],
-                'dispense_quantity': actually_given,
-                'dispenser_tx_hash': dispenser['tx_hash']
-            }
-            sql = 'INSERT INTO dispenses(tx_index, dispense_index, tx_hash, block_index, source, destination, asset, dispense_quantity, dispenser_tx_hash) \
-                    VALUES(:tx_index, :dispense_index, :tx_hash, :block_index, :source, :destination, :asset, :dispense_quantity, :dispenser_tx_hash);'
-            cursor.execute(sql, bindings)
-            dispense_index += 1
+                dispenser['block_index'] = next_out['block_index']
+                dispenser['prev_status'] = STATUS_OPEN
+                cursor.execute('UPDATE DISPENSERS SET give_remaining=:give_remaining, status=:status \
+                        WHERE source=:source AND asset=:asset AND satoshirate=:satoshirate AND give_quantity=:give_quantity AND status=:prev_status', dispenser)
+
+                bindings = {
+                    'tx_index': next_out['tx_index'],
+                    'tx_hash': next_out['tx_hash'],
+                    'dispense_index': dispense_index,
+                    'block_index': next_out['block_index'],
+                    'source': next_out['destination'],
+                    'destination': next_out['source'],
+                    'asset': dispenser['asset'],
+                    'dispense_quantity': actually_given,
+                    'dispenser_tx_hash': dispenser['tx_hash']
+                }
+                sql = 'INSERT INTO dispenses(tx_index, dispense_index, tx_hash, block_index, source, destination, asset, dispense_quantity, dispenser_tx_hash) \
+                        VALUES(:tx_index, :dispense_index, :tx_hash, :block_index, :source, :destination, :asset, :dispense_quantity, :dispenser_tx_hash);'
+                cursor.execute(sql, bindings)
+                dispense_index += 1
 
     cursor.close()

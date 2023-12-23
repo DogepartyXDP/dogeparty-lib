@@ -230,8 +230,8 @@ def log (db, command, category, bindings):
                 if divisible:
                     escrow_quantity = "{:.8f}".format(bindings["escrow_quantity"]/config.UNIT)
                 else:                
-                    escrow_quantity = bindings["escrow_quantity"]
-            
+                    escrow_quantity = bindings["escrow_quantity"]                 
+        
             if ("action" in bindings) and bindings["action"] == 'refill dispenser':
                 logger.info("Dispenser: {} refilled a dispenser with {} {}".format(bindings["source"],escrow_quantity,bindings["asset"]))
             elif "prev_status" in bindings: #There was a dispense

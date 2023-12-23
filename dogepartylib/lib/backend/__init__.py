@@ -52,8 +52,8 @@ def getblockhash(blockcount):
     return BACKEND().getblockhash(blockcount)
 
 def getjsonblock(block_hash):
-	return BACKEND().getjsonblock(block_hash)
-	
+    return BACKEND().getjsonblock(block_hash)
+    
 def getblock(block_hash):
     block_hex = BACKEND().getblock(block_hash)
     return CBlock.deserialize(util.unhexlify(block_hex))
@@ -65,7 +65,7 @@ def clear_pretx(txid):
     del PRETX_CACHE[binascii.hexlify(txid).decode('utf8')]
 
 def getrawtx(tx_hash):
-	return BACKEND().getrawtx(tx_hash)
+    return BACKEND().getrawtx(tx_hash)
 
 def getrawtransaction(tx_hash, verbose=False, skip_missing=False):
     if tx_hash in PRETX_CACHE:
@@ -151,18 +151,18 @@ def get_txhash_list(block):
 #    return (tx_hash_list, raw_transactions)
 
 def get_tx_list(block):
-	raw_transactions = {}
-	tx_hash_list = block["tx"]
+    raw_transactions = {}
+    tx_hash_list = block["tx"]
 
-	for tx in tx_hash_list:
-#		raw_transactions[tx] = rpc("getrawtransaction",[tx])
-		raw_transactions[tx] = getrawtx(tx)		
+    for tx in tx_hash_list:
+#       raw_transactions[tx] = rpc("getrawtransaction",[tx])
+        raw_transactions[tx] = getrawtx(tx)     
 
-	return (tx_hash_list, raw_transactions)
+    return (tx_hash_list, raw_transactions)
 
-def sort_unspent_txouts(unspent, unconfirmed=False):
+def sort_unspent_txouts(unspent, unconfirmed=False, dust_size=config.DEFAULT_REGULAR_DUST_SIZE):
     # Filter out all dust amounts to avoid bloating the resultant transaction
-    unspent = list(filter(lambda x: x['value'] > config.DEFAULT_MULTISIG_DUST_SIZE, unspent))
+    unspent = list(filter(lambda x: x['value'] > dust_size, unspent))
     # Sort by amount, using the largest UTXOs available
     if config.REGTEST:
         # REGTEST has a lot of coinbase inputs that can't be spent due to maturity
@@ -218,6 +218,9 @@ def get_unspent_txouts(source, unconfirmed=False, unspent_tx_hash=None):
 
 def search_raw_transactions(address, unconfirmed=True):
     return BACKEND().search_raw_transactions(address, unconfirmed)
+
+def get_oldest_tx(address):
+    return BACKEND().get_oldest_tx(address)
 
 class UnknownPubKeyError(Exception):
     pass

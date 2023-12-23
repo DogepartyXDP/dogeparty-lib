@@ -853,6 +853,10 @@ class APIServer(threading.Thread):
             return backend.search_raw_transactions(address, unconfirmed=unconfirmed)
 
         @dispatcher.add_method
+        def get_oldest_tx(address):
+            return backend.get_oldest_tx(address)
+
+        @dispatcher.add_method
         def get_unspent_txouts(address, unconfirmed=False, unspent_tx_hash=None, order_by=None):
             results = backend.get_unspent_txouts(address, unconfirmed=unconfirmed, unspent_tx_hash=unspent_tx_hash)
             if order_by is None:
@@ -924,7 +928,7 @@ class APIServer(threading.Thread):
                 
                 if dispenser["oracle_address"] != None:
                     fiat_price = util.satoshirate_to_fiat(dispenser["satoshirate"])
-                    oracle_price, oracle_fee, oracle_fiat_label, oracle_price_last_updated = util.get_last_oracle_info(self.db, dispenser.oracle_address, bindings['block_index'])
+                    oracle_price, oracle_fee, oracle_fiat_label, oracle_price_last_updated = util.get_oracle_last_price(self.db, dispenser["oracle_address"], util.CURRENT_BLOCK_INDEX)
                     
                     if (oracle_price > 0):
                         satoshi_price = math.ceil((fiat_price/oracle_price) * config.UNIT)

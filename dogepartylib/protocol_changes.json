@@ -576,6 +576,13 @@
     "block_index": 3847979,
     "testnet_block_index": 4236278
   },
+  "dispenser_doge_activity_check": {
+      "minimum_version_major": 9,
+      "minimum_version_minor": 59,
+      "minimum_version_revision": 4,
+      "block_index": 5011801,
+      "testnet_block_index": 5878616
+  },
   "pascal_string_removed": {
       "minimum_version_major": 9,
       "minimum_version_minor": 59,

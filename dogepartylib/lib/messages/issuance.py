@@ -338,10 +338,12 @@ def compose (db, source, transfer_destination, asset, quantity, divisible, lock,
                 #   generate a random numeric asset id which will map to this subasset
                 asset = util.generate_random_asset()
 
-    call_date, call_price, problems, fee, validated_description, divisible, lock, reset, reissuance, reissued_asset_longname = validate(db, source, transfer_destination, asset, quantity, divisible, lock, reset, callable_, call_date, call_price, description, subasset_parent, subasset_longname, util.CURRENT_BLOCK_INDEX)
+    asset_id = util.generate_asset_id(asset, util.CURRENT_BLOCK_INDEX)
+    asset_name = util.generate_asset_name(asset_id, util.CURRENT_BLOCK_INDEX) #This will remove leading zeros in the numeric assets
+    
+    call_date, call_price, problems, fee, validated_description, divisible, lock, reset, reissuance, reissued_asset_longname = validate(db, source, transfer_destination, asset_name, quantity, divisible, lock, reset, callable_, call_date, call_price, description, subasset_parent, subasset_longname, util.CURRENT_BLOCK_INDEX)
     if problems: raise exceptions.ComposeError(problems)
 
-    asset_id = util.generate_asset_id(asset, util.CURRENT_BLOCK_INDEX)
     if subasset_longname is None or reissuance:
         # Type 20 standard issuance FORMAT_2 >QQ??If
         #   used for standard issuances and all reissuances

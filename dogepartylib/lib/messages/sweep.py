@@ -168,6 +168,7 @@ def parse (db, tx, message):
                 util.credit(db, destination, balance['asset'], balance['quantity'], action='sweep', event=tx['tx_hash'])
 
         if flags & FLAG_OWNERSHIP:
+            sweep_pos = 0
             assets_issued = balances
             if util.enabled("zero_balance_ownership_sweep_fix", tx["block_index"]):
                 cursor.execute('''SELECT DISTINCT(asset) FROM issuances WHERE issuer = ?''', (tx['source'],))

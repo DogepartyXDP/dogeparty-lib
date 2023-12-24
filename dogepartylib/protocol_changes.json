@@ -617,5 +617,23 @@
       "minimum_version_revision": 4,
       "block_index": 9999999,
       "testnet_block_index": 5818423
+  },
+  "dispenser_close_delay": {
+    "mainnet":{
+      "1":{
+        "value":0
+      },
+      "5018708":{
+        "value":5
+      }   
+    },
+    "testnet":{
+      "1":{
+        "value":0
+      },    
+      "5894897":{
+        "value":5
+      }
+    }
   }
 }

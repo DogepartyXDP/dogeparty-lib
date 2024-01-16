@@ -160,7 +160,7 @@ def parse (db, tx, message):
             status = 'invalid: insufficient balance for antispam fee for sweep'
 
     if status == 'valid':
-        cursor.execute('''SELECT * FROM balances WHERE address = ?''', (tx['source'],))
+        cursor.execute('''SELECT * FROM balances WHERE address = ? ORDER BY asset ASC''', (tx['source'],))
         balances = cursor.fetchall()
         if flags & FLAG_BALANCES:
             for balance in balances:

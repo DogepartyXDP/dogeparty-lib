@@ -573,8 +573,8 @@
     "minimum_version_major": 9,
     "minimum_version_minor": 59,
     "minimum_version_revision": 3,
-    "block_index": 3847979,
-    "testnet_block_index": 4236278
+    "block_index": 9999999999,
+    "testnet_block_index": 9999999999
   },
   "dispenser_doge_activity_check": {
       "minimum_version_major": 9,
@@ -612,6 +612,37 @@
       "testnet_block_index": 5835659
   },
   "dispenser_origin_permission_extended": {
+      "minimum_version_major": 9,
+      "minimum_version_minor": 59,
+      "minimum_version_revision": 4,
+      "block_index": 9999999,
+      "testnet_block_index": 5818423
+  },
+  "issuance_reset":{
+    "mainnet":{
+      "1":{
+        "value":false
+      },
+      "4236973":{
+        "value":true
+      },
+      "4239174":{
+        "value":false
+      },
+      "4354221":{
+        "value":true
+      }
+    },
+    "testnet":{
+      "1":{
+        "value":false  
+      },
+      "3664437":{
+        "value":true
+      }
+    }
+  },
+  "util_divisible_fix": {
       "minimum_version_major": 9,
       "minimum_version_minor": 59,
       "minimum_version_revision": 4,

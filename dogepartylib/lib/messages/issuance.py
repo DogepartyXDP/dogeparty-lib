@@ -500,66 +500,70 @@ def parse (db, tx, message, message_type_id):
 
     # Debit fee.
     if status == 'valid':
-        util.debit(db, tx['source'], config.XDP, fee, action="issuance fee", event=tx['tx_hash'])
+        if not reset or (util.get_value_by_block_index("issuance_reset",tx['block_index']) and fee > 0): # there are issuances fee equal to 0 on the ledger
+            util.debit(db, tx['source'], config.XDP, fee, action="issuance fee", event=tx['tx_hash'])
 
     # Reset?
     if reset:
-        balances_cursor = issuance_parse_cursor.execute('''SELECT * FROM balances WHERE asset = ? AND quantity > 0''', (asset,))
-        balances_result = balances_cursor.fetchall()
-        
-        if len(balances_result) == 1:
-            owner_balance = balances_result[0]["quantity"]
-            owner_address = balances_result[0]["address"]
+        if util.get_value_by_block_index("issuance_reset",tx['block_index']):
+            balances_cursor = issuance_parse_cursor.execute('''SELECT * FROM balances WHERE asset = ? AND quantity > 0''', (asset,))
+            balances_result = balances_cursor.fetchall()
             
-            if owner_address == tx['source']:
+            if len(balances_result) == 1:
+                owner_balance = balances_result[0]["quantity"]
+                owner_address = balances_result[0]["address"]
+                
+                if owner_address == tx['source']:
 
-            
-                if status == 'valid':
-                    util.debit(db, tx['source'], asset, owner_balance, 'reset destroy', tx['tx_hash'])
-                    
-                    bindings = {
+                
+                    if status == 'valid':
+                        util.debit(db, tx['source'], asset, owner_balance, 'reset destroy', tx['tx_hash'])
+                        
+                        bindings = {
+                            'tx_index': tx['tx_index'],
+                            'tx_hash': tx['tx_hash'],
+                            'block_index': tx['block_index'],
+                            'source': tx['source'],
+                            'asset': asset,
+                            'quantity': owner_balance,
+                            'tag': "reset",
+                            'status': "valid",
+                            'reset': True,
+                           }
+                        sql = 'insert into destructions values(:tx_index, :tx_hash, :block_index, :source, :asset, :quantity, :tag, :status)'
+                        issuance_parse_cursor.execute(sql, bindings)
+                
+                
+                
+                    bindings= {
                         'tx_index': tx['tx_index'],
                         'tx_hash': tx['tx_hash'],
                         'block_index': tx['block_index'],
-                        'source': tx['source'],
                         'asset': asset,
-                        'quantity': owner_balance,
-                        'tag': "reset",
-                        'status': "valid",
+                        'quantity': quantity,
+                        'divisible': divisible,
+                        'source': tx['source'],
+                        'issuer': tx['source'],
+                        'transfer': False,
+                        'callable': callable_,
+                        'call_date': call_date,
+                        'call_price': call_price,
+                        'description': description,
+                        'fee_paid': 0,
+                        'locked': lock,
+                        'status': status,
                         'reset': True,
-                       }
-                    sql = 'insert into destructions values(:tx_index, :tx_hash, :block_index, :source, :asset, :quantity, :tag, :status)'
-                    issuance_parse_cursor.execute(sql, bindings)
-            
-            
-            
-                bindings= {
-                    'tx_index': tx['tx_index'],
-                    'tx_hash': tx['tx_hash'],
-                    'block_index': tx['block_index'],
-                    'asset': asset,
-                    'quantity': quantity,
-                    'divisible': divisible,
-                    'source': tx['source'],
-                    'issuer': tx['source'],
-                    'transfer': False,
-                    'callable': callable_,
-                    'call_date': call_date,
-                    'call_price': call_price,
-                    'description': description,
-                    'fee_paid': 0,
-                    'locked': lock,
-                    'status': status,
-                    'reset': True,
-                    'asset_longname': reissued_asset_longname,
-                }
-            
-                sql='insert into issuances values(:tx_index, :tx_hash, 0, :block_index, :asset, :quantity, :divisible, :source, :issuer, :transfer, :callable, :call_date, :call_price, :description, :fee_paid, :locked, :status, :asset_longname)'
-                issuance_parse_cursor.execute(sql, bindings)
+                        'asset_longname': reissued_asset_longname,
+                    }
                 
-                # Credit.
-                if status == 'valid' and quantity:
-                    util.credit(db, tx['source'], asset, quantity, action="reset issuance", event=tx['tx_hash'])
+                    sql='insert into issuances values(:tx_index, :tx_hash, 0, :block_index, :asset, :quantity, :divisible, :source, :issuer, :transfer, :callable, :call_date, :call_price, :description, :fee_paid, :locked, :status, :asset_longname)'
+                    issuance_parse_cursor.execute(sql, bindings)
+                    
+                    # Credit.
+                    if status == 'valid' and quantity:
+                        util.credit(db, tx['source'], asset, quantity, action="reset issuance", event=tx['tx_hash'])
+        else:
+            logger.warn("Not executing reset [issuance] tx [%s]: %s" % (tx['tx_hash'], "reset feature are not activated"))
     else:
         if tx['destination']:
             issuer = tx['destination']

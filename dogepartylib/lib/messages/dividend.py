@@ -59,7 +59,7 @@ def validate (db, source, quantity_per_unit, asset, dividend_asset, block_index)
 
     # Examine asset.
     try:
-        divisible = util.is_divisible(db, asset)
+        divisible = util.is_divisible(db, asset, not util.enabled("util_divisible_fix",block_index))
     except AssetError:
         problems.append('no such asset, {}.'.format(asset))
         return None, None, problems, 0
@@ -73,7 +73,7 @@ def validate (db, source, quantity_per_unit, asset, dividend_asset, block_index)
 
     # Examine dividend asset.
     try:
-        dividend_divisible = util.is_divisible(db, dividend_asset)
+        dividend_divisible = util.is_divisible(db, dividend_asset, not util.enabled("util_divisible_fix",block_index))
     except AssetError:
         problems.append('no such dividend asset, {}.'.format(dividend_asset))
         return None, None, problems, 0

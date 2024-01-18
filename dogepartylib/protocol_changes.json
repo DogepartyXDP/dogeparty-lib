@@ -189,25 +189,25 @@
     "testnet_block_index": 1440200
   },
   "p2sh_encoding": {
-      "minimum_version_major": 9,
-      "minimum_version_minor": 57,
-      "minimum_version_revision": 0,
-      "block_index": 585538,
-      "testnet_block_index": 1569194
+    "minimum_version_major": 9,
+    "minimum_version_minor": 57,
+    "minimum_version_revision": 0,
+    "block_index": 585538,
+    "testnet_block_index": 1569194
   },
   "sweep_send": {
-      "minimum_version_major": 9,
-      "minimum_version_minor": 57,
-      "minimum_version_revision": 0,
-      "block_index": 585538,
-      "testnet_block_index": 1569194
+    "minimum_version_major": 9,
+    "minimum_version_minor": 57,
+    "minimum_version_revision": 0,
+    "block_index": 585538,
+    "testnet_block_index": 1569194
   },
   "dispensers": {
-      "minimum_version_major": 9,
-      "minimum_version_minor": 57,
-      "minimum_version_revision": 0,
-      "block_index": 585538,
-      "testnet_block_index": 1569194
+    "minimum_version_major": 9,
+    "minimum_version_minor": 57,
+    "minimum_version_revision": 0,
+    "block_index": 585538,
+    "testnet_block_index": 1569194
   },
   "mpma_sends": {
     "minimum_version_major": 9,
@@ -273,303 +273,303 @@
     "testnet_block_index": 1666625
   },
   "magic_word_prefix": {
-    "mainnet":{
-      "1":{
-        "value":"CNTRPRTY"  
+    "mainnet": {
+      "1": {
+        "value": "CNTRPRTY"
       },
-      "3829071":{
-        "value":"DOGEPRTY"
-      }   
+      "3829071": {
+        "value": "DOGEPRTY"
+      }
     },
-    "testnet":{
-      "1":{
-        "value":"XX"  
-      },    
-      "3256486":{
-        "value":"XX"
-      }   
+    "testnet": {
+      "1": {
+        "value": "XX"
+      },
+      "3256486": {
+        "value": "XX"
+      }
     }
   },
   "burn_address": {
-    "mainnet":{
-      "1":{
-        "value":"DDogepartyxxxxxxxxxxxxxxxxxxw1dfzr"  
+    "mainnet": {
+      "1": {
+        "value": "DDogepartyxxxxxxxxxxxxxxxxxxw1dfzr"
       },
-      "3829071":{
-        "value":"DParty4kWgih7MpTUivMn1icgC5x7fxALP"
-      }   
+      "3829071": {
+        "value": "DParty4kWgih7MpTUivMn1icgC5x7fxALP"
+      }
     },
-    "testnet":{
-      "1":{
-        "value":"ndogepartyxxxxxxxxxxxxxxxxxxwpsZCH"  
-      },    
-      "3256486":{
-        "value":"niV5qKrqwsJyhR7SVrPnpuz2TC3aDKTWgU"
-      }   
+    "testnet": {
+      "1": {
+        "value": "ndogepartyxxxxxxxxxxxxxxxxxxwpsZCH"
+      },
+      "3256486": {
+        "value": "niV5qKrqwsJyhR7SVrPnpuz2TC3aDKTWgU"
+      }
     }
   },
   "oracle_dispensers": {
-      "minimum_version_major": 9,
-      "minimum_version_minor": 59,
-      "minimum_version_revision": 4,
-      "block_index": 9999999,
-      "testnet_block_index": 4083373
+    "minimum_version_major": 9,
+    "minimum_version_minor": 59,
+    "minimum_version_revision": 4,
+    "block_index": 9999999,
+    "testnet_block_index": 4083373
   },
   "burn_start": {
-    "mainnet":{
-      "1":{
-        "value":335642
+    "mainnet": {
+      "1": {
+        "value": 335642
       },
-      "3919346":{
-        "value":3919346
-      }   
+      "3919346": {
+        "value": 3919346
+      }
     },
-    "testnet":{
-      "1":{
-        "value":166371  
-      },    
-      "3256485":{
-        "value":3256485
-      }   
+    "testnet": {
+      "1": {
+        "value": 166371
+      },
+      "3256485": {
+        "value": 3256485
+      }
     }
   },
   "burn_end": {
-    "mainnet":{
-      "1":{
-        "value":378842  
+    "mainnet": {
+      "1": {
+        "value": 378842
       },
-      "3919346":{
-        "value":4007186
-      }   
+      "3919346": {
+        "value": 4007186
+      }
     },
-    "testnet":{
-      "1":{
-        "value":260418
-      },    
-      "3256485":{
-        "value":4121256
-      }   
+    "testnet": {
+      "1": {
+        "value": 260418
+      },
+      "3256485": {
+        "value": 4121256
+      }
     }
   },
   "burn_multiplier_constant": {
-    "mainnet":{
-      "1":{
-        "value":0.001
+    "mainnet": {
+      "1": {
+        "value": 0.001
       },
-      "3919346":{
-        "value":0.1
-      }   
+      "3919346": {
+        "value": 0.1
+      }
     },
-    "testnet":{
-      "1":{
-        "value":1  
-      },    
-      "3256485":{
-        "value":0.1
-      }   
+    "testnet": {
+      "1": {
+        "value": 1
+      },
+      "3256485": {
+        "value": 0.1
+      }
     }
   },
   "burn_multiplier_product": {
-    "mainnet":{
-      "1":{
-        "value":0.0005  
+    "mainnet": {
+      "1": {
+        "value": 0.0005
       },
-      "3919346":{
-        "value":0.05
-      }   
+      "3919346": {
+        "value": 0.05
+      }
     },
-    "testnet":{
-      "1":{
-        "value":0.5
-      },    
-      "3256485":{
-        "value":0.05
-      }   
+    "testnet": {
+      "1": {
+        "value": 0.5
+      },
+      "3256485": {
+        "value": 0.05
+      }
     }
   },
   "burn_limit": {
-    "mainnet":{
-      "1":{
-        "value":20000000
+    "mainnet": {
+      "1": {
+        "value": 20000000
       },
-      "3829071":{
-        "value":1000000
-      }   
+      "3829071": {
+        "value": 1000000
+      }
     },
-    "testnet":{
-      "1":{
-        "value":5000000
-      },    
-      "3256486":{
-        "value":1000000
-      }   
+    "testnet": {
+      "1": {
+        "value": 5000000
+      },
+      "3256486": {
+        "value": 1000000
+      }
     }
-  },  
+  },
   "order_serialization_format": {
-    "mainnet":{
-      "1":{
-        "value":">QQQQHQ"  
+    "mainnet": {
+      "1": {
+        "value": ">QQQQHQ"
       },
-      "3829071":{
-        "value":">QQQQIQ"
-      }   
+      "3829071": {
+        "value": ">QQQQIQ"
+      }
     },
-    "testnet":{
-      "1":{
-        "value":">QQQQHQ"  
-      },    
-      "3280349":{
-        "value":">QQQQIQ"
-      }   
+    "testnet": {
+      "1": {
+        "value": ">QQQQHQ"
+      },
+      "3280349": {
+        "value": ">QQQQIQ"
+      }
     }
   },
   "order_serialization_length": {
-    "mainnet":{
-      "1":{
-        "value":42  
+    "mainnet": {
+      "1": {
+        "value": 42
       },
-      "3829071":{
-        "value":44
-      }   
+      "3829071": {
+        "value": 44
+      }
     },
-    "testnet":{
-      "1":{
-        "value":42
-      },    
-      "3280349":{
-        "value":44
-      }   
+    "testnet": {
+      "1": {
+        "value": 42
+      },
+      "3280349": {
+        "value": 44
+      }
     }
   },
   "issuance_asset_serialization_format": {
-    "mainnet":{
-      "1":{
-        "value":">QQ??If"  
+    "mainnet": {
+      "1": {
+        "value": ">QQ??If"
       },
-      "3852387":{
-        "value":">QQ???If"
+      "3852387": {
+        "value": ">QQ???If"
       },
-      "4200500":{
-        "value":">QQ????If"
-      }   
+      "4200500": {
+        "value": ">QQ????If"
+      }
     },
-    "testnet":{
-      "1":{
-        "value":">QQ??If"  
-      },    
-      "3285682":{
-        "value":">QQ???If"
+    "testnet": {
+      "1": {
+        "value": ">QQ??If"
       },
-      "3627850":{
-        "value":">QQ????If"
-      }   
+      "3285682": {
+        "value": ">QQ???If"
+      },
+      "3627850": {
+        "value": ">QQ????If"
+      }
     }
   },
   "issuance_asset_serialization_length": {
-    "mainnet":{
-      "1":{
-        "value":26  
+    "mainnet": {
+      "1": {
+        "value": 26
       },
-      "3852387":{
-        "value":27
+      "3852387": {
+        "value": 27
       },
-      "4200500":{
-        "value":28
-      }   
+      "4200500": {
+        "value": 28
+      }
     },
-    "testnet":{
-      "1":{
-        "value":26
-      },    
-      "3285682":{
-        "value":27
+    "testnet": {
+      "1": {
+        "value": 26
       },
-      "3627850":{
-        "value":28
-      }   
+      "3285682": {
+        "value": 27
+      },
+      "3627850": {
+        "value": 28
+      }
     }
   },
   "issuance_subasset_serialization_format": {
-    "mainnet":{
-      "1":{
-        "value":">QQ?B"  
+    "mainnet": {
+      "1": {
+        "value": ">QQ?B"
       },
-      "3852387":{
-        "value":">QQ??B"
+      "3852387": {
+        "value": ">QQ??B"
       },
-      "4200500":{
-        "value":">QQ???B"
-      }   
+      "4200500": {
+        "value": ">QQ???B"
+      }
     },
-    "testnet":{
-      "1":{
-        "value":">QQ?B"  
-      },    
-      "3285682":{
-        "value":">QQ??B"
+    "testnet": {
+      "1": {
+        "value": ">QQ?B"
       },
-      "3627850":{
-        "value":">QQ???B"
-      }   
+      "3285682": {
+        "value": ">QQ??B"
+      },
+      "3627850": {
+        "value": ">QQ???B"
+      }
     }
   },
   "issuance_subasset_serialization_length": {
-    "mainnet":{
-      "1":{
-        "value":18  
+    "mainnet": {
+      "1": {
+        "value": 18
       },
-      "3852387":{
-        "value":19
+      "3852387": {
+        "value": 19
       },
-      "4200500":{
-        "value":20
-      }   
+      "4200500": {
+        "value": 20
+      }
     },
-    "testnet":{
-      "1":{
-        "value":18
-      },    
-      "3285682":{
-        "value":19
+    "testnet": {
+      "1": {
+        "value": 18
       },
-      "3627850":{
-        "value":20
-      }   
+      "3285682": {
+        "value": 19
+      },
+      "3627850": {
+        "value": 20
+      }
     }
   },
   "dispenser_parsing_validation": {
-      "minimum_version_major": 9,
-      "minimum_version_minor": 59,
-      "minimum_version_revision": 4,
-      "block_index": 9999999,
-      "testnet_block_index": 5818423
+    "minimum_version_major": 9,
+    "minimum_version_minor": 59,
+    "minimum_version_revision": 4,
+    "block_index": 9999999,
+    "testnet_block_index": 5818423
   },
   "reopen_order_when_dogepay_expires_fix": {
-      "minimum_version_major": 9,
-      "minimum_version_minor": 59,
-      "minimum_version_revision": 6,
-      "block_index": 3924000,
-      "testnet_block_index": 3365000
+    "minimum_version_major": 9,
+    "minimum_version_minor": 59,
+    "minimum_version_revision": 6,
+    "block_index": 3924000,
+    "testnet_block_index": 3365000
   },
-  "order_match_expire_time":{
-    "mainnet":{
-      "1":{
-        "value":20  
+  "order_match_expire_time": {
+    "mainnet": {
+      "1": {
+        "value": 20
       },
-      "3847700":{
-        "value":120
+      "3847700": {
+        "value": 120
       }
     },
-    "testnet":{
-      "1":{
-        "value":20  
+    "testnet": {
+      "1": {
+        "value": 20
       },
-      "3256485":{
-        "value":120
+      "3256485": {
+        "value": 120
       }
     }
   },
-  "ledger_hash_ordered":{
+  "ledger_hash_ordered": {
     "minimum_version_major": 9,
     "minimum_version_minor": 59,
     "minimum_version_revision": 3,
@@ -577,76 +577,94 @@
     "testnet_block_index": 9999999999
   },
   "dispenser_doge_activity_check": {
-      "minimum_version_major": 9,
-      "minimum_version_minor": 59,
-      "minimum_version_revision": 4,
-      "block_index": 9999999,
-      "testnet_block_index": 5878616
+    "minimum_version_major": 9,
+    "minimum_version_minor": 59,
+    "minimum_version_revision": 4,
+    "block_index": 9999999,
+    "testnet_block_index": 5878616
   },
   "pascal_string_removed": {
-      "minimum_version_major": 9,
-      "minimum_version_minor": 59,
-      "minimum_version_revision": 6,
-      "block_index": 9999999,
-      "testnet_block_index": 5885210
+    "minimum_version_major": 9,
+    "minimum_version_minor": 59,
+    "minimum_version_revision": 6,
+    "block_index": 9999999,
+    "testnet_block_index": 5885210
   },
   "issuance_description_special_null": {
-      "minimum_version_major": 9,
-      "minimum_version_minor": 59,
-      "minimum_version_revision": 6,
-      "block_index": 9999999,
-      "testnet_block_index": 5885210
+    "minimum_version_major": 9,
+    "minimum_version_minor": 59,
+    "minimum_version_revision": 6,
+    "block_index": 9999999,
+    "testnet_block_index": 5885210
   },
   "numeric_asset_fee": {
-      "minimum_version_major": 9,
-      "minimum_version_minor": 59,
-      "minimum_version_revision": 6,
-      "block_index": 9999999,
-      "testnet_block_index": 5885210
+    "minimum_version_major": 9,
+    "minimum_version_minor": 59,
+    "minimum_version_revision": 6,
+    "block_index": 9999999,
+    "testnet_block_index": 5885210
   },
   "multiple_dispenses": {
-      "minimum_version_major": 9,
-      "minimum_version_minor": 59,
-      "minimum_version_revision": 6,
-      "block_index": 9999999,
-      "testnet_block_index": 5835659
+    "minimum_version_major": 9,
+    "minimum_version_minor": 59,
+    "minimum_version_revision": 6,
+    "block_index": 9999999,
+    "testnet_block_index": 5835659
   },
   "dispenser_origin_permission_extended": {
-      "minimum_version_major": 9,
-      "minimum_version_minor": 59,
-      "minimum_version_revision": 4,
-      "block_index": 9999999,
-      "testnet_block_index": 5818423
+    "minimum_version_major": 9,
+    "minimum_version_minor": 59,
+    "minimum_version_revision": 4,
+    "block_index": 9999999,
+    "testnet_block_index": 5818423
   },
-  "issuance_reset":{
-    "mainnet":{
-      "1":{
-        "value":false
+  "sweep_antispam_fee": {
+      "mainnet": {
+          "1": {
+              "value": 0
+          },
+          "5018708": {
+              "value": 0.001
+          }
       },
-      "4236973":{
-        "value":true
+      "testnet": {
+          "1": {
+              "value": 0
+          },
+          "5894897": {
+              "value": 0.001
+          }
+      }
+  },  
+  "issuance_reset": {
+    "mainnet": {
+      "1": {
+        "value": false
       },
-      "4239174":{
-        "value":false
+      "4236973": {
+        "value": true
       },
-      "4354221":{
-        "value":true
+      "4239174": {
+        "value": false
+      },
+      "4354221": {
+        "value": true
       }
     },
-    "testnet":{
-      "1":{
-        "value":false  
+    "testnet": {
+      "1": {
+        "value": false
       },
-      "3664437":{
-        "value":true
+      "3664437": {
+        "value": true
       }
     }
   },
   "util_divisible_fix": {
-      "minimum_version_major": 9,
-      "minimum_version_minor": 59,
-      "minimum_version_revision": 4,
-      "block_index": 9999999,
-      "testnet_block_index": 5818423
+    "minimum_version_major": 9,
+    "minimum_version_minor": 59,
+    "minimum_version_revision": 4,
+    "block_index": 9999999,
+    "testnet_block_index": 5818423
   }
 }

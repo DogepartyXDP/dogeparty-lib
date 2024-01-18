@@ -612,11 +612,11 @@
     "testnet_block_index": 5835659
   },
   "dispenser_origin_permission_extended": {
-      "minimum_version_major": 9,
-      "minimum_version_minor": 59,
-      "minimum_version_revision": 4,
-      "block_index": 9999999,
-      "testnet_block_index": 5818423
+    "minimum_version_major": 9,
+    "minimum_version_minor": 59,
+    "minimum_version_revision": 4,
+    "block_index": 9999999,
+    "testnet_block_index": 5818423
   },
   "max_refills": {
     "mainnet":{

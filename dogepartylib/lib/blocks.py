@@ -50,7 +50,8 @@ TABLES = ['credits', 'debits', 'messages'] + \
          'cancels', 'dividends', 'issuances', 'sends',
          'rps_match_expirations', 'rps_expirations', 'rpsresolves',
          'rps_matches', 'rps',
-         'destructions', 'assets', 'addresses', 'sweeps', 'dispensers', 'dispenses']
+         'destructions', 'assets', 'addresses', 'sweeps', 'dispensers', 'dispenses',
+         'dispenser_refills']
 # Compose list of tables tracked by undolog
 UNDOLOG_TABLES = copy.copy(TABLES)
 UNDOLOG_TABLES.remove('messages')
@@ -968,6 +969,7 @@ def reinitialise(db, block_index=None):
 
     # For rollbacks, just delete new blocks and then reparse what’s left.
     if block_index:
+        cursor.execute('''DELETE FROM dispenser_refills WHERE block_index > ?''', (block_index,))
         cursor.execute('''DELETE FROM transaction_outputs WHERE block_index > ?''', (block_index,))
         cursor.execute('''DELETE FROM transactions WHERE block_index > ?''', (block_index,))
         cursor.execute('''DELETE FROM blocks WHERE block_index > ?''', (block_index,))
@@ -1029,6 +1031,7 @@ def reparse(db, block_index=None, quiet=False):
                 undolog_cursor.execute(entry[1])
 
             # Trim back tx and blocks
+            undolog_cursor.execute('''DELETE FROM dispenser_refills WHERE block_index > ?''', (block_index,))
             undolog_cursor.execute('''DELETE FROM transaction_outputs WHERE block_index > ?''', (block_index,))
             undolog_cursor.execute('''DELETE FROM transactions WHERE block_index > ?''', (block_index,))
             undolog_cursor.execute('''DELETE FROM blocks WHERE block_index > ?''', (block_index,))

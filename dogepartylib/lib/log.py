@@ -251,11 +251,6 @@ def log (db, command, category, bindings):
                     else:    
                         operator_string = "marked to close by origin"
             
-                operator_string = "operator closed"
-            
-                if util.enabled("dispenser_origin_permission_extended", bindings['block_index']) and ("origin" in bindings) and bindings['source'] != bindings['origin']:
-                    operator_string = "closed by origin"
-            
                 logger.info("Dispenser: {} closed dispenser for {} ({})".format(bindings["source"],bindings["asset"],operator_string))
         # TODO: elif category == 'balances':
             # logger.debug('Database: set balance of {} in {} to {}.'.format(bindings['address'], bindings['asset'], output(bindings['quantity'], bindings['asset']).split(' ')[0]))

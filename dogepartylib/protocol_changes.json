@@ -636,6 +636,13 @@
       }
     }
   },
+  "zero_balance_ownership_sweep_fix": {
+    "minimum_version_major": 9,
+    "minimum_version_minor": 59,
+    "minimum_version_revision": 4,
+    "block_index": 9999999,
+    "testnet_block_index": 5818423
+  },
   "sweep_antispam_fee": {
       "mainnet": {
           "1": {

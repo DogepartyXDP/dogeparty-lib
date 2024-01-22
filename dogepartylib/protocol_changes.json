@@ -310,9 +310,9 @@
   },
   "oracle_dispensers": {
     "minimum_version_major": 9,
-    "minimum_version_minor": 59,
-    "minimum_version_revision": 4,
-    "block_index": 9999999,
+    "minimum_version_minor": 62,
+    "minimum_version_revision": 0,
+    "block_index": 5080600,
     "testnet_block_index": 4083373
   },
   "burn_start": {
@@ -539,9 +539,9 @@
   },
   "dispenser_parsing_validation": {
     "minimum_version_major": 9,
-    "minimum_version_minor": 59,
-    "minimum_version_revision": 4,
-    "block_index": 9999999,
+    "minimum_version_minor": 62,
+    "minimum_version_revision": 0,
+    "block_index": 5080600,
     "testnet_block_index": 5818423
   },
   "reopen_order_when_dogepay_expires_fix": {
@@ -578,44 +578,44 @@
   },
   "dispenser_doge_activity_check": {
     "minimum_version_major": 9,
-    "minimum_version_minor": 59,
-    "minimum_version_revision": 4,
-    "block_index": 9999999,
+    "minimum_version_minor": 62,
+    "minimum_version_revision": 0,
+    "block_index": 5080600,
     "testnet_block_index": 5878616
   },
   "pascal_string_removed": {
     "minimum_version_major": 9,
-    "minimum_version_minor": 59,
-    "minimum_version_revision": 6,
-    "block_index": 9999999,
+    "minimum_version_minor": 62,
+    "minimum_version_revision": 0,
+    "block_index": 5080600,
     "testnet_block_index": 5885210
   },
   "issuance_description_special_null": {
     "minimum_version_major": 9,
     "minimum_version_minor": 59,
     "minimum_version_revision": 6,
-    "block_index": 9999999,
+    "block_index": 5080600,
     "testnet_block_index": 5885210
   },
   "numeric_asset_fee": {
     "minimum_version_major": 9,
-    "minimum_version_minor": 59,
-    "minimum_version_revision": 6,
-    "block_index": 9999999,
+    "minimum_version_minor": 62,
+    "minimum_version_revision": 0,
+    "block_index": 5080600,
     "testnet_block_index": 5885210
   },
   "multiple_dispenses": {
     "minimum_version_major": 9,
-    "minimum_version_minor": 59,
-    "minimum_version_revision": 6,
-    "block_index": 9999999,
+    "minimum_version_minor": 62,
+    "minimum_version_revision": 0,
+    "block_index": 5080600,
     "testnet_block_index": 5835659
   },
   "dispenser_origin_permission_extended": {
     "minimum_version_major": 9,
-    "minimum_version_minor": 59,
-    "minimum_version_revision": 4,
-    "block_index": 9999999,
+    "minimum_version_minor": 62,
+    "minimum_version_revision": 0,
+    "block_index": 5080600,
     "testnet_block_index": 5818423
   },
   "dispenser_close_delay": {
@@ -623,7 +623,7 @@
       "1":{
         "value":0
       },
-      "5018708":{
+      "5080600":{
         "value":60
       }   
     },
@@ -641,7 +641,7 @@
       "1": {
         "value": 0
       },
-      "5018708": {
+      "5080600": {
         "value": 1000
       }
     },
@@ -656,9 +656,9 @@
   },
   "zero_balance_ownership_sweep_fix": {
     "minimum_version_major": 9,
-    "minimum_version_minor": 59,
-    "minimum_version_revision": 4,
-    "block_index": 9999999,
+    "minimum_version_minor": 62,
+    "minimum_version_revision": 0,
+    "block_index": 5080600,
     "testnet_block_index": 5818423
   },
   "max_refills": {
@@ -666,7 +666,7 @@
       "1":{
         "value":0  
       },
-      "5018708":{
+      "5080600":{
         "value":5
       }   
     },
@@ -684,7 +684,7 @@
       "1": {
         "value": 0
       },
-      "5018708": {
+      "5080600": {
         "value": 0.001
       }
     },
@@ -723,9 +723,9 @@
   },
   "util_divisible_fix": {
     "minimum_version_major": 9,
-    "minimum_version_minor": 59,
-    "minimum_version_revision": 4,
-    "block_index": 9999999,
+    "minimum_version_minor": 62,
+    "minimum_version_revision": 0,
+    "block_index": 5080600,
     "testnet_block_index": 5818423
   }
 }

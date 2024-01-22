@@ -585,9 +585,9 @@
   },
   "pascal_string_removed": {
     "minimum_version_major": 9,
-    "minimum_version_minor": 59,
-    "minimum_version_revision": 6,
-    "block_index": 9999999,
+    "minimum_version_minor": 62,
+    "minimum_version_revision": 0,
+    "block_index": 5080600,
     "testnet_block_index": 5885210
   },
   "issuance_description_special_null": {
@@ -723,9 +723,9 @@
   },
   "util_divisible_fix": {
     "minimum_version_major": 9,
-    "minimum_version_minor": 59,
-    "minimum_version_revision": 4,
-    "block_index": 9999999,
+    "minimum_version_minor": 62,
+    "minimum_version_revision": 0,
+    "block_index": 5080600,
     "testnet_block_index": 5818423
   }
 }

@@ -637,20 +637,20 @@
     }
   },
   "max_dispenses_limit": {
-    "mainnet":{
-      "1":{
-        "value":0  
+    "mainnet": {
+      "1": {
+        "value": 0
       },
-      "5018708":{
-        "value":1000
-      }   
+      "5018708": {
+        "value": 1000
+      }
     },
-    "testnet":{
-      "1":{
-        "value":0
-      },    
-      "5894897":{
-        "value":1000
+    "testnet": {
+      "1": {
+        "value": 0
+      },
+      "5894897": {
+        "value": 1000
       }
     }
   },
@@ -661,24 +661,42 @@
     "block_index": 9999999,
     "testnet_block_index": 5818423
   },
-  "sweep_antispam_fee": {
-      "mainnet": {
-          "1": {
-              "value": 0
-          },
-          "5018708": {
-              "value": 0.001
-          }
+  "max_refills": {
+    "mainnet":{
+      "1":{
+        "value":0  
       },
-      "testnet": {
-          "1": {
-              "value": 0
-          },
-          "5894897": {
-              "value": 0.001
-          }
+      "5018708":{
+        "value":5
+      }   
+    },
+    "testnet":{
+      "1":{
+        "value":0
+      },    
+      "5894897":{
+        "value":5
       }
-  },  
+    }
+  },
+  "sweep_antispam_fee": {
+    "mainnet": {
+      "1": {
+        "value": 0
+      },
+      "5018708": {
+        "value": 0.001
+      }
+    },
+    "testnet": {
+      "1": {
+        "value": 0
+      },
+      "5894897": {
+        "value": 0.001
+      }
+    }
+  },
   "issuance_reset": {
     "mainnet": {
       "1": {

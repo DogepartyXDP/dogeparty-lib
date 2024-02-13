@@ -149,10 +149,10 @@ def validate (db, source, asset, give_quantity, escrow_quantity, mainchainrate, 
             status = STATUS_OPEN
 
         if util.enabled("dispenser_origin_permission_extended", block_index) and status == STATUS_CLOSED and open_address and open_address != source:
-            cursor.execute('''SELECT * FROM dispensers WHERE source = ? AND asset = ? AND status=? AND origin=?''', (open_address, asset, STATUS_OPEN, source))
+            cursor.execute('''SELECT * FROM dispensers WHERE source = ? AND asset = ? AND status IN (0,11) AND origin=?''', (open_address, asset, source))
         else:
             query_address = open_address if status == STATUS_OPEN_EMPTY_ADDRESS else source
-            cursor.execute('''SELECT * FROM dispensers WHERE source = ? AND asset = ? AND status=?''', (query_address, asset, STATUS_OPEN))
+            cursor.execute('''SELECT * FROM dispensers WHERE source = ? AND asset = ? AND status IN (0,11)''', (query_address, asset))
         open_dispensers = cursor.fetchall()
         if len(open_dispensers) == 0 or open_dispensers[0]["status"] != STATUS_CLOSING:
             if status == STATUS_OPEN or status == STATUS_OPEN_EMPTY_ADDRESS:

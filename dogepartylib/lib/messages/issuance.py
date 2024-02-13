@@ -467,7 +467,10 @@ def parse (db, tx, message, message_type_id):
         try:
             asset = util.generate_asset_name(asset_id, tx['block_index'])
             if description == None:
-                description = util.get_asset_description(db, asset)
+                try:
+                    description = util.get_asset_description(db, asset)
+                except exceptions.AssetError:
+                    description = ""
             
             status = 'valid'
         except exceptions.AssetIDError:
